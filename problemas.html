@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Problemas Recorrentes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=2"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title">
+      <div>
+        <span class="eyebrow">Registro tecnico</span>
+        <h1>Problemas recorrentes</h1>
+        <p>Registre erros, responsaveis, Jira e cliente.</p>
+      </div>
+      <nav class="main-nav" aria-label="Navegacao principal">
+        <a href="index.html">Inicio</a>
+        <a href="sped.html">SPED</a>
+        <a href="procedimentos.html">Procedimentos</a>
+        <a href="implantacoes.html">Implantação</a>
+        <a href="diario.html">Diário</a>
+        <a class="active" href="problemas.html">Problemas</a>
+        <a href="setup.html">Setup</a>
+        <a href="agenda.html">Agenda</a>
+        <a href="forca-vendas.html">Força de Vendas</a>
+      </nav>
+    </section>
+
+    <section class="card" data-requires="write">
+      <h2>Novo registro</h2>
+      <form id="issueForm">
+        <input type="hidden" id="issueId" />
+        <div class="form-grid">
+          <div class="col-12">
+            <label for="issueDescricao">Descricao do erro</label>
+            <textarea id="issueDescricao" rows="4" required></textarea>
+          </div>
+          <div class="col-6">
+            <label for="issueTecnicos">Tecnico(s) responsavel(is)</label>
+            <input id="issueTecnicos" placeholder="Ex.: Ana, Carlos, Joao" required />
+            <small>Separe mais de um tecnico por virgula.</small>
+          </div>
+          <div class="col-3">
+            <label for="issueJira">Numero da tarefa Jira</label>
+            <input id="issueJira" placeholder="PROJ-123" required />
+          </div>
+          <div class="col-3">
+            <label for="issueCliente">Cliente</label>
+            <input id="issueCliente" required />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit">Salvar registro</button>
+          <button type="button" id="cancelIssueEditBtn" class="ghost">Cancelar edicao</button>
+          <button type="button" id="clearAllBtn" data-requires="admin" class="danger">Limpar todos</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Registros cadastrados</h2>
+      <div class="toolbar">
+        <input id="searchInput" placeholder="Buscar por erro, tecnico, Jira ou cliente..." />
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Descricao do erro</th>
+              <th>Tecnicos</th>
+              <th>Jira</th>
+              <th>Cliente</th>
+              <th>Acoes</th>
+            </tr>
+          </thead>
+          <tbody id="issueTableBody"></tbody>
+        </table>
+      </div>
+
+      <div id="issueEmptyState" class="empty">Nenhum problema recorrente cadastrado.</div>
+    </section>
+  </main>
+
+  <script src="script.js?v=14"></script>
+</body>
+</html>

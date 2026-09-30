@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPED</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=2"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title">
+      <div>
+        <span class="eyebrow">Controle mensal</span>
+        <h1>SPED</h1>
+        <p>Controle as correções e validações de SPED PIS/COFINS e SPED ICMS/IPI.</p>
+      </div>
+      <nav class="main-nav" aria-label="Navegacao principal">
+        <a href="index.html">Início</a>
+        <a class="active" href="sped.html">SPED</a>
+        <a href="procedimentos.html">Procedimentos</a>
+        <a href="implantacoes.html">Implantação</a>
+        <a href="diario.html">Diário</a>
+        <a href="problemas.html">Problemas</a>
+        <a href="setup.html">Setup</a>
+        <a href="agenda.html">Agenda</a>
+        <a href="forca-vendas.html">Força de Vendas</a>
+      </nav>
+    </section>
+
+    <section class="card quick-actions" aria-label="Acoes rapidas">
+      <button type="button" id="showSpedFormBtn" data-requires="write">Adicionar novo SPED</button>
+      <button type="button" id="showClientFormBtn" data-requires="write" class="ghost">Adicionar novo cliente</button>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <h2>SPEDs cadastrados</h2>
+        <div class="tab-bar" role="tablist">
+          <button type="button" class="tab-btn sped-tab-btn active" data-tab="todos" role="tab" aria-selected="true">Todos</button>
+          <button type="button" class="tab-btn sped-tab-btn" data-tab="corrigido" role="tab" aria-selected="false">Corrigido</button>
+        </div>
+      </div>
+      <div id="spedSummary" class="summary"></div>
+
+      <div class="toolbar filters">
+        <div class="filter-field">
+          <label for="spedClientFilter">Cliente</label>
+          <select id="spedClientFilter">
+            <option value="">Todos os clientes</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="spedSearchInput">Busca geral</label>
+          <input id="spedSearchInput" placeholder="Técnico, tipo, status ou observação..." />
+        </div>
+        <div class="filter-field">
+          <label for="spedMonthFilter">Competência</label>
+          <input id="spedMonthFilter" type="month" />
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Competência</th>
+              <th>Tipo</th>
+              <th>Status</th>
+              <th>Técnico</th>
+              <th>Telefone</th>
+              <th>Data agendamento</th>
+              <th>Horario</th>
+              <th>Finalizado em</th>
+              <th>Observação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="spedTableBody"></tbody>
+        </table>
+      </div>
+
+      <div id="spedGroupedList" style="display:none"></div>
+
+      <div id="spedEmptyState" class="empty">Nenhuma correção SPED cadastrada.</div>
+    </section>
+  </main>
+
+  <dialog id="spedClientModal" class="popup-modal popup-modal-medium" aria-labelledby="spedClientModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="spedClientModalTitle">Gerenciar clientes</h2>
+        <button type="button" class="icon-button" data-close-modal="spedClientModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="spedClientForm" class="inline-form">
+        <input type="hidden" id="spedClientOriginalName" />
+        <div>
+          <label for="spedClientName">Cliente</label>
+          <input id="spedClientName" placeholder="Nome do cliente" required />
+        </div>
+        <div>
+          <label for="spedClientPhone">Telefone</label>
+          <input id="spedClientPhone" type="tel" placeholder="(00) 00000-0000" />
+        </div>
+        <div class="form-row-actions">
+          <button type="submit" id="spedClientSubmitBtn">Adicionar cliente</button>
+          <button type="button" id="cancelClientEditBtn" class="ghost" style="display:none">Cancelar</button>
+        </div>
+      </form>
+      <div id="spedClientList" class="client-list"></div>
+    </div>
+  </dialog>
+
+  <dialog id="spedFormModal" class="popup-modal popup-modal-wide" aria-labelledby="spedFormModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="spedFormModalTitle">Novo SPED</h2>
+        <button type="button" class="icon-button" data-close-modal="spedFormModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="spedForm">
+        <input type="hidden" id="spedId" />
+        <div class="form-grid">
+          <div class="col-3">
+            <label for="spedCliente">Cliente</label>
+            <div class="combo">
+              <input id="spedCliente" autocomplete="off" required />
+              <div id="spedClientMenu" class="combo-menu" role="listbox"></div>
+            </div>
+          </div>
+          <div class="col-3">
+            <label for="spedCompetencia">Competência</label>
+            <input id="spedCompetencia" type="month" required />
+          </div>
+          <div class="col-3">
+            <label for="spedTipo">Tipo de SPED</label>
+            <select id="spedTipo" required>
+              <option value="">Selecione</option>
+              <option value="Sped Contribuições">Sped Contribuições</option>
+              <option value="Sped ICMS-IPI">Sped ICMS-IPI</option>
+              <option value="Sped Contribuições / Sped ICMS-IPI">Sped Contribuições / Sped ICMS-IPI</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="spedStatus">Status</label>
+            <select id="spedStatus" required>
+              <option value="Em aberto">Em aberto</option>
+              <option value="Pendente">Pendente</option>
+              <option value="Em correcao">Em correção</option>
+              <option value="Corrigido">Corrigido</option>
+              <option value="Entregue">Entregue</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="spedTecnico">Técnico responsável</label>
+            <div class="combo">
+              <input id="spedTecnico" placeholder="Selecione ou digite..." autocomplete="off" required />
+              <div id="spedTecnicoMenu" class="combo-menu" role="listbox"></div>
+            </div>
+          </div>
+          <div class="col-3">
+            <label for="spedTelefone">Telefone</label>
+            <input id="spedTelefone" placeholder="Ex.: (00) 00000-0000" type="tel" />
+          </div>
+          <div class="col-3">
+            <label for="spedDataAgendamento">Data de agendamento</label>
+            <input id="spedDataAgendamento" type="date" />
+          </div>
+          <div class="col-3">
+            <label for="spedHorarioAgendamento">Horario</label>
+            <input id="spedHorarioAgendamento" type="time" />
+          </div>
+          <div class="col-3">
+            <label for="spedDataFinalizacao">Finalizado em</label>
+            <input id="spedDataFinalizacao" type="date" />
+          </div>
+          <div class="col-6">
+            <label for="spedObservacao">Observação</label>
+            <input id="spedObservacao" placeholder="Ex.: aguardando arquivo retificado" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit">Salvar SPED</button>
+          <button type="button" id="cancelSpedEditBtn" class="ghost">Cancelar edição</button>
+          <button type="button" id="clearSpedBtn" data-requires="admin" class="danger">Limpar SPED</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=14"></script>
+</body>
+</html>

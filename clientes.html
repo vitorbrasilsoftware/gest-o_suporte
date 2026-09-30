@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clientes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=2"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title">
+      <div>
+        <span class="eyebrow">Cadastro</span>
+        <h1>Clientes</h1>
+        <p>Gerencie os clientes, prioridades e envio de SPED.</p>
+      </div>
+      <nav class="main-nav" aria-label="Navegacao principal">
+        <a href="index.html">Início</a>
+        <a href="sped.html">SPED</a>
+        <a href="procedimentos.html">Procedimentos</a>
+        <a href="implantacoes.html">Implantação</a>
+        <a href="diario.html">Diário</a>
+        <a href="problemas.html">Problemas</a>
+        <a class="active" href="clientes.html">Clientes</a>
+        <a href="agenda.html">Agenda</a>
+        <a href="forca-vendas.html">Força de Vendas</a>
+      </nav>
+    </section>
+
+    <section class="card quick-actions" aria-label="Acoes rapidas">
+      <button type="button" id="showClienteFormBtn" data-requires="write">Adicionar novo cliente</button>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <h2>Clientes cadastrados</h2>
+      </div>
+      <div id="clienteSummary" class="summary"></div>
+
+      <div class="toolbar filters">
+        <div class="filter-field">
+          <label for="clienteSearchInput">Busca</label>
+          <input id="clienteSearchInput" placeholder="Nome, CPF/CNPJ ou telefone..." />
+        </div>
+        <div class="filter-field">
+          <label for="clientePrioridadeFilter">Prioridade</label>
+          <select id="clientePrioridadeFilter">
+            <option value="">Todas</option>
+            <option value="Alta">Alta</option>
+            <option value="Média">Média</option>
+            <option value="Baixa">Baixa</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="clienteSpedFilter">SPED</label>
+          <select id="clienteSpedFilter">
+            <option value="">Todos</option>
+            <option value="true">Envia SPED</option>
+            <option value="false">Não envia SPED</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="clienteTipoFilter">Tipo</label>
+          <select id="clienteTipoFilter">
+            <option value="">Todos</option>
+            <option value="Matriz">Matriz</option>
+            <option value="Filial">Filial</option>
+            <option value="Independente">Independente</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="clientes-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>CPF/CNPJ</th>
+              <th>Telefone</th>
+              <th>Prioridade</th>
+              <th>SPED</th>
+              <th>Versão Banco</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="clienteTableBody"></tbody>
+        </table>
+      </div>
+      <div id="clienteEmptyState" class="empty">Nenhum cliente cadastrado.</div>
+    </section>
+  </main>
+
+  <dialog id="clienteFormModal" class="popup-modal popup-modal-medium" aria-labelledby="clienteFormModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="clienteFormModalTitle">Novo cliente</h2>
+        <button type="button" class="icon-button" data-close-modal="clienteFormModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="clienteForm">
+        <input type="hidden" id="clienteId" />
+        <div class="form-grid">
+          <div class="col-6">
+            <label for="clienteNome">Nome</label>
+            <input id="clienteNome" placeholder="Nome do cliente" required />
+          </div>
+          <div class="col-3">
+            <label for="clienteTipoDocumento">Documento</label>
+            <select id="clienteTipoDocumento">
+              <option value="CNPJ">CNPJ</option>
+              <option value="CPF">CPF</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="clienteCpfCnpj" id="clienteCpfCnpjLabel">CNPJ</label>
+            <input id="clienteCpfCnpj" placeholder="14 caracteres, sem pontuação" maxlength="14" autocomplete="off" required />
+          </div>
+          <div class="col-6">
+            <label for="clienteTelefone">Telefone</label>
+            <input id="clienteTelefone" type="tel" placeholder="(00) 00000-0000" />
+          </div>
+          <div class="col-6">
+            <label for="clientePrioridade">Prioridade</label>
+            <select id="clientePrioridade">
+              <option value="Baixa">Baixa</option>
+              <option value="Média">Média</option>
+              <option value="Alta">Alta</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label for="clienteSped">Envia SPED?</label>
+            <select id="clienteSped">
+              <option value="false">Não</option>
+              <option value="true">Sim</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label for="clienteVem">Tem VEM?</label>
+            <select id="clienteVem">
+              <option value="false">Não</option>
+              <option value="true">Sim</option>
+            </select>
+          </div>
+          <div class="col-6" id="clienteVemLicencasRow" style="display:none">
+            <label for="clienteVemLicencas">Vendedores com licença VEM</label>
+            <input id="clienteVemLicencas" type="number" min="0" step="1" placeholder="0" />
+          </div>
+          <div class="col-6">
+            <label for="clienteAutomacaoVendas">Tem Automação de Vendas?</label>
+            <select id="clienteAutomacaoVendas">
+              <option value="false">Não</option>
+              <option value="true">Sim</option>
+            </select>
+          </div>
+          <div class="col-6" id="clienteAutomacaoLicencasRow" style="display:none">
+            <label for="clienteAutomacaoLicencas">Vendedores com licença de Automação</label>
+            <input id="clienteAutomacaoLicencas" type="number" min="0" step="1" placeholder="0" />
+          </div>
+          <div class="col-6">
+            <label for="clienteTipoEmpresa">Tipo de empresa</label>
+            <select id="clienteTipoEmpresa">
+              <option value="Independente">Independente</option>
+              <option value="Matriz">Matriz</option>
+              <option value="Filial">Filial</option>
+            </select>
+          </div>
+          <div class="col-6" id="clienteMatrizRow" style="display:none">
+            <label for="clienteMatrizId">Empresa matriz</label>
+            <select id="clienteMatrizId">
+              <option value="">Selecione a matriz...</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit">Salvar cliente</button>
+          <button type="button" id="cancelClienteEditBtn" class="ghost">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=14"></script>
+</body>
+</html>

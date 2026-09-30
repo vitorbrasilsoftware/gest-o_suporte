@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Força de Vendas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=2"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title">
+      <div>
+        <span class="eyebrow">Comercial</span>
+        <h1>Força de Vendas</h1>
+        <p>Controle quais clientes têm VEM e/ou Automação de Vendas.</p>
+      </div>
+      <nav class="main-nav" aria-label="Navegacao principal">
+        <a href="index.html">Início</a>
+        <a href="sped.html">SPED</a>
+        <a href="procedimentos.html">Procedimentos</a>
+        <a href="implantacoes.html">Implantação</a>
+        <a href="diario.html">Diário</a>
+        <a href="problemas.html">Problemas</a>
+        <a href="setup.html">Setup</a>
+        <a href="agenda.html">Agenda</a>
+        <a class="active" href="forca-vendas.html">Força de Vendas</a>
+      </nav>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <h2>Clientes e produtos</h2>
+        <div class="small-actions">
+          <button type="button" id="fvGerarPdfBtn" class="ghost">Gerar relatório PDF</button>
+        </div>
+      </div>
+      <div id="fvSummary" class="summary"></div>
+
+      <div class="toolbar filters">
+        <div class="filter-field">
+          <label for="fvSearchInput">Busca</label>
+          <input id="fvSearchInput" placeholder="Nome ou CPF/CNPJ..." />
+        </div>
+        <div class="filter-field">
+          <label for="fvProdutoFilter">Produto</label>
+          <select id="fvProdutoFilter">
+            <option value="">Selecione...</option>
+            <option value="todos">Todos os clientes</option>
+            <option value="vem">Com VEM</option>
+            <option value="automacao">Com Automação de Vendas</option>
+            <option value="ambos">Com os dois</option>
+            <option value="nenhum">Sem nenhum</option>
+          </select>
+        </div>
+        <div class="filter-field fv-clear-field">
+          <button type="button" id="fvLimparFiltrosBtn" class="ghost">Limpar filtros</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="fv-table">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>CPF/CNPJ</th>
+              <th>VEM</th>
+              <th>Automação de Vendas</th>
+              <th>Técnico responsável</th>
+              <th>Observação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="fvTableBody"></tbody>
+        </table>
+      </div>
+      <div id="fvEmptyState" class="empty">Pesquise o nome de um cliente para ver os aplicativos utilizados.</div>
+    </section>
+  </main>
+
+  <dialog id="fvFormModal" class="popup-modal popup-modal-medium" aria-labelledby="fvFormModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="fvFormModalTitle">Força de vendas</h2>
+        <button type="button" class="icon-button" data-close-modal="fvFormModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="fvForm">
+        <input type="hidden" id="fvClienteId" />
+        <p id="fvFormCliente" class="helper-text"></p>
+        <div class="form-grid">
+          <div class="col-6">
+            <label for="fvVem">Tem VEM?</label>
+            <select id="fvVem">
+              <option value="false">Não</option>
+              <option value="true">Sim</option>
+            </select>
+          </div>
+          <div class="col-6" id="fvVemLicencasRow" style="display:none">
+            <label for="fvVemLicencas">Vendedores com licença VEM</label>
+            <input id="fvVemLicencas" type="number" min="0" step="1" placeholder="0" />
+          </div>
+          <div class="col-6">
+            <label for="fvAutomacao">Tem Automação de Vendas?</label>
+            <select id="fvAutomacao">
+              <option value="false">Não</option>
+              <option value="true">Sim</option>
+            </select>
+          </div>
+          <div class="col-6" id="fvAutomacaoLicencasRow" style="display:none">
+            <label for="fvAutomacaoLicencas">Vendedores com licença de Automação</label>
+            <input id="fvAutomacaoLicencas" type="number" min="0" step="1" placeholder="0" />
+          </div>
+          <div class="col-12">
+            <label for="fvTecnico">Técnico responsável</label>
+            <select id="fvTecnico"></select>
+          </div>
+          <div class="col-12">
+            <label for="fvObservacao">Observação</label>
+            <textarea id="fvObservacao" rows="4" placeholder="Anotações sobre a instalação, vendedores, pendências..."></textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit">Salvar</button>
+          <button type="button" class="ghost" data-close-modal="fvFormModal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <div id="fvPdfArea" aria-hidden="true"></div>
+
+  <script src="script.js?v=14"></script>
+</body>
+</html>

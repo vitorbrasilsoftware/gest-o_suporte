@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Procedimentos Técnicos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=2"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title">
+      <div>
+        <span class="eyebrow">Controle de atividades</span>
+        <h1>Procedimentos Técnicos</h1>
+        <p>Gerencie e acompanhe os procedimentos técnicos por cliente.</p>
+      </div>
+      <nav class="main-nav" aria-label="Navegacao principal">
+        <a href="index.html">Início</a>
+        <a href="sped.html">SPED</a>
+        <a class="active" href="procedimentos.html">Procedimentos</a>
+        <a href="implantacoes.html">Implantação</a>
+        <a href="diario.html">Diário</a>
+        <a href="problemas.html">Problemas</a>
+        <a href="setup.html">Setup</a>
+        <a href="agenda.html">Agenda</a>
+        <a href="forca-vendas.html">Força de Vendas</a>
+      </nav>
+    </section>
+
+    <section class="card quick-actions" aria-label="Acoes rapidas">
+      <button type="button" id="showProcFormBtn" data-requires="write">Novo procedimento</button>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <h2>Procedimentos cadastrados</h2>
+        <div class="tab-bar" role="tablist">
+          <button type="button" class="tab-btn proc-tab-btn active" data-tab="todos" role="tab" aria-selected="true">Todos</button>
+          <button type="button" class="tab-btn proc-tab-btn" data-tab="concluido" role="tab" aria-selected="false">Concluído</button>
+        </div>
+      </div>
+      <div id="procSummary" class="summary"></div>
+
+      <div class="toolbar filters">
+        <div class="filter-field">
+          <label for="procClientFilter">Cliente</label>
+          <select id="procClientFilter">
+            <option value="">Todos os clientes</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="procSearchInput">Busca geral</label>
+          <input id="procSearchInput" placeholder="Técnico, tipo, status ou observação..." />
+        </div>
+        <div class="filter-field">
+          <label for="procMonthFilter">Mês do agendamento</label>
+          <input id="procMonthFilter" type="month" />
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Tipo</th>
+              <th>Status</th>
+              <th>Técnico</th>
+              <th>Telefone</th>
+              <th>Data agendamento</th>
+              <th>Horário</th>
+              <th>Finalizado em</th>
+              <th class="col-dias">Dias</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="procTableBody"></tbody>
+        </table>
+      </div>
+
+      <div id="procGroupedList" style="display:none"></div>
+
+      <div id="procEmptyState" class="empty">Nenhum procedimento técnico cadastrado.</div>
+    </section>
+  </main>
+
+  <dialog id="procFormModal" class="popup-modal popup-modal-wide" aria-labelledby="procFormModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="procFormModalTitle">Novo Procedimento</h2>
+        <button type="button" class="icon-button" data-close-modal="procFormModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="procForm" novalidate>
+        <input type="hidden" id="procId" />
+        <div class="form-grid">
+          <div class="col-3">
+            <label for="procCliente">Cliente</label>
+            <div class="combo">
+              <input id="procCliente" autocomplete="off" required />
+              <div id="procClientMenu" class="combo-menu" role="listbox"></div>
+            </div>
+          </div>
+          <div class="col-3">
+            <label for="procTipo">Tipo de procedimento</label>
+            <select id="procTipo" required>
+              <option value="">Selecione</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="procStatus">Status</label>
+            <select id="procStatus" required>
+              <option value="Em aberto">Em aberto</option>
+              <option value="Em andamento">Em andamento</option>
+              <option value="Concluído">Concluído</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="procTecnico">Técnico responsável</label>
+            <div class="combo">
+              <input id="procTecnico" placeholder="Selecione ou digite..." autocomplete="off" required />
+              <div id="procTecnicoMenu" class="combo-menu" role="listbox"></div>
+            </div>
+          </div>
+          <div class="col-3">
+            <label for="procTelefone">Telefone</label>
+            <input id="procTelefone" placeholder="Ex.: (00) 00000-0000" type="tel" />
+          </div>
+          <div class="col-3">
+            <label for="procDataAgendamento">Data de agendamento</label>
+            <input id="procDataAgendamento" type="date" />
+          </div>
+          <div class="col-3">
+            <label for="procHorario">Horário</label>
+            <input id="procHorario" type="time" />
+          </div>
+          <div class="col-3">
+            <label for="procDataFinalizacao">Finalizado em</label>
+            <input id="procDataFinalizacao" type="date" />
+          </div>
+          <div id="procVersaoBancoRow" class="col-3" style="display:none">
+            <label for="procVersaoBanco">Versão do banco</label>
+            <input id="procVersaoBanco" placeholder="Ex.: 1.2.3" />
+          </div>
+          <div class="col-6">
+            <label for="procObservacao">Observação</label>
+            <input id="procObservacao" placeholder="Ex.: aguardando retorno do cliente" />
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit">Salvar procedimento</button>
+          <button type="button" id="cancelProcEditBtn" class="ghost">Cancelar edição</button>
+          <button type="button" id="clearProcBtn" data-requires="admin" class="danger">Limpar tudo</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Modal: observação do procedimento -->
+  <dialog id="procObsModal" class="popup-modal popup-modal-medium" aria-labelledby="procObsModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="procObsModalTitle">Observação</h2>
+        <button type="button" class="icon-button" data-close-modal="procObsModal" aria-label="Fechar">X</button>
+      </div>
+      <div id="procObsContent" class="proc-obs-content"></div>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=14"></script>
+</body>
+</html>

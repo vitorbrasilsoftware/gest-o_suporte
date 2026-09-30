@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agenda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=2"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title">
+      <div>
+        <span class="eyebrow">Controle de atividades</span>
+        <h1>Agenda</h1>
+        <p>Visualize e gerencie os agendamentos em um calendário mensal.</p>
+      </div>
+      <nav class="main-nav" aria-label="Navegacao principal">
+        <a href="index.html">Início</a>
+        <a href="sped.html">SPED</a>
+        <a href="procedimentos.html">Procedimentos</a>
+        <a href="implantacoes.html">Implantação</a>
+        <a href="diario.html">Diário</a>
+        <a href="problemas.html">Problemas</a>
+        <a href="setup.html">Setup</a>
+        <a class="active" href="agenda.html">Agenda</a>
+        <a href="forca-vendas.html">Força de Vendas</a>
+      </nav>
+    </section>
+
+    <section class="card agenda-month-bar">
+      <button type="button" id="agendaPrevMonth" class="ghost" aria-label="Mês anterior">&#8592;</button>
+      <span id="agendaMonthLabel" class="agenda-month-label"></span>
+      <button type="button" id="agendaNextMonth" class="ghost" aria-label="Próximo mês">&#8594;</button>
+      <button type="button" id="agendaTodayBtn" class="ghost">Hoje</button>
+    </section>
+
+    <div class="agenda-calendar" id="agendaCalendar">
+      <div class="agenda-calendar-weekdays">
+        <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+      </div>
+      <div class="agenda-calendar-grid" id="agendaCalendarGrid"></div>
+    </div>
+  </main>
+
+  <dialog id="agendaDayModal" class="popup-modal popup-modal-medium" aria-labelledby="agendaDayModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="agendaDayModalTitle">Agendamentos</h2>
+        <button type="button" class="icon-button" data-close-modal="agendaDayModal" aria-label="Fechar">X</button>
+      </div>
+      <div class="agenda-day-list" id="agendaDayList"></div>
+      <div id="agendaDayEmpty" class="empty">Nenhum agendamento para este dia.</div>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=14"></script>
+</body>
+</html>

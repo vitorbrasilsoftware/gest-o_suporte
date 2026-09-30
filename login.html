@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entrar — Gestão Suporte</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=2"></script>
+</head>
+<body class="auth-page">
+  <main class="auth-layout">
+    <section class="auth-brand">
+      <div class="auth-logo">
+        <img src="logo_gestao-suporte.png?v=2" alt="Gestão Suporte — Gestão de Suporte de Sistemas" />
+      </div>
+    </section>
+
+    <section class="auth-card card">
+      <p class="auth-message" id="authMessage" role="alert" hidden></p>
+
+      <div id="loginView">
+        <h2>Entrar</h2>
+        <p class="helper-text">Use seu e-mail e senha de acesso.</p>
+        <form id="loginForm" novalidate>
+          <div class="auth-field">
+            <label for="loginEmail">E-mail</label>
+            <input id="loginEmail" type="email" autocomplete="username" required />
+          </div>
+          <div class="auth-field">
+            <label for="loginSenha">Senha</label>
+            <input id="loginSenha" type="password" autocomplete="current-password" required />
+          </div>
+          <button type="submit" class="auth-submit">Entrar</button>
+        </form>
+        <div class="auth-links">
+          <a href="#" class="text-link" data-auth-view="recuperar">Esqueci minha senha</a>
+          <a href="#" class="text-link" data-auth-view="cadastro">Solicitar acesso</a>
+        </div>
+      </div>
+
+      <div id="signupView" hidden>
+        <h2>Solicitar acesso</h2>
+        <p class="helper-text">Sua conta fica pendente até um administrador liberar o acesso e definir seu perfil.</p>
+        <form id="signupForm" novalidate>
+          <div class="auth-field">
+            <label for="signupNome">Nome</label>
+            <input id="signupNome" autocomplete="name" required />
+          </div>
+          <div class="auth-field">
+            <label for="signupEmail">E-mail</label>
+            <input id="signupEmail" type="email" autocomplete="email" required />
+          </div>
+          <div class="auth-field">
+            <label for="signupSenha">Senha</label>
+            <input id="signupSenha" type="password" autocomplete="new-password" minlength="8" required />
+            <small>Mínimo de 8 caracteres.</small>
+          </div>
+          <div class="auth-field">
+            <label for="signupConfirma">Confirmar senha</label>
+            <input id="signupConfirma" type="password" autocomplete="new-password" minlength="8" required />
+          </div>
+          <button type="submit" class="auth-submit">Enviar solicitação</button>
+        </form>
+        <div class="auth-links">
+          <a href="#" class="text-link" data-auth-view="login">Voltar para o login</a>
+        </div>
+      </div>
+
+      <div id="recoverView" hidden>
+        <h2>Recuperar senha</h2>
+        <p class="helper-text">Enviaremos um link para você criar uma nova senha.</p>
+        <form id="recoverForm" novalidate>
+          <div class="auth-field">
+            <label for="recoverEmail">E-mail</label>
+            <input id="recoverEmail" type="email" autocomplete="email" required />
+          </div>
+          <button type="submit" class="auth-submit">Enviar link</button>
+        </form>
+        <div class="auth-links">
+          <a href="#" class="text-link" data-auth-view="login">Voltar para o login</a>
+        </div>
+      </div>
+
+      <div id="resetView" hidden>
+        <h2>Nova senha</h2>
+        <p class="helper-text">Defina a nova senha da sua conta.</p>
+        <form id="resetForm" novalidate>
+          <div class="auth-field">
+            <label for="resetSenha">Nova senha</label>
+            <input id="resetSenha" type="password" autocomplete="new-password" minlength="8" required />
+            <small>Mínimo de 8 caracteres.</small>
+          </div>
+          <div class="auth-field">
+            <label for="resetConfirma">Confirmar nova senha</label>
+            <input id="resetConfirma" type="password" autocomplete="new-password" minlength="8" required />
+          </div>
+          <button type="submit" class="auth-submit">Salvar nova senha</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

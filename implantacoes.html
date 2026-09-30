@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Implantação</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=2"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title">
+      <div>
+        <h1>Implantação</h1>
+        <p>Acompanhe todo o processo de implantação de clientes novos.</p>
+      </div>
+      <nav class="main-nav" aria-label="Navegacao principal">
+        <a href="index.html">Início</a>
+        <a href="sped.html">SPED</a>
+        <a href="procedimentos.html">Procedimentos</a>
+        <a class="active" href="implantacoes.html">Implantação</a>
+        <a href="diario.html">Diário</a>
+        <a href="problemas.html">Problemas</a>
+        <a href="setup.html">Setup</a>
+        <a href="agenda.html">Agenda</a>
+        <a href="forca-vendas.html">Força de Vendas</a>
+      </nav>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row" style="margin-top:0;">
+        <h3>Implantações</h3>
+        <div class="tab-bar" role="tablist">
+          <button type="button" class="tab-btn impl-tab-btn active" data-tab="andamento" role="tab" aria-selected="true">Em andamento</button>
+          <button type="button" class="tab-btn impl-tab-btn" data-tab="concluido" role="tab" aria-selected="false">Concluído</button>
+        </div>
+      </div>
+      <div id="implAbertasList" class="client-list"></div>
+      <div id="implAbertasEmptyState" class="empty">Nenhuma implantação em aberto no momento.</div>
+    </section>
+
+    <section class="card" id="implFichaSection">
+      <div class="filter-field" style="max-width:420px;margin-bottom:1.25rem;">
+        <label for="implClientSearch">Selecionar cliente</label>
+        <div class="combo">
+          <input id="implClientSearch" placeholder="Digite o nome do cliente..." autocomplete="off" />
+          <div id="implClientMenu" class="combo-menu" role="listbox"></div>
+        </div>
+      </div>
+
+      <div id="implNoClientState" class="empty">Selecione um cliente para ver ou iniciar a implantação.</div>
+
+      <div id="implClientView" style="display:none">
+        <div class="card-header-row" style="margin-top:0.25rem;">
+          <h3>Dados da implantação</h3>
+          <div class="small-actions">
+            <button type="button" id="showImplFormBtn" data-requires="write">Editar dados</button>
+            <button type="button" id="implToggleSummaryBtn" class="ghost">Mostrar estrutura e acessos</button>
+            <button type="button" id="implGerarPdfBtn" class="ghost">Gerar PDF</button>
+          </div>
+        </div>
+        <div class="impl-summary-fields">
+          <div class="estrutura-field">
+            <span class="estrutura-label">Técnico responsável</span>
+            <span class="estrutura-value" id="implSumTecnico">—</span>
+          </div>
+          <div class="estrutura-field">
+            <span class="estrutura-label">Status</span>
+            <span class="estrutura-value" id="implSumStatus">—</span>
+          </div>
+          <div class="estrutura-field">
+            <span class="estrutura-label">Enquadramento da empresa</span>
+            <span class="estrutura-value" id="implSumEnquadramento">—</span>
+          </div>
+        </div>
+        <div id="implSummaryCard" class="impl-summary" style="display:none">
+          <h4 class="estrutura-title">Estrutura do cliente</h4>
+          <div class="impl-summary-fields">
+            <div class="estrutura-field">
+              <span class="estrutura-label">Base Gerencial</span>
+              <span class="estrutura-value" id="implSumBaseGerencial">—</span>
+            </div>
+            <div class="estrutura-field">
+              <span class="estrutura-label">Base Fiscal</span>
+              <span class="estrutura-value" id="implSumBaseFiscal">—</span>
+            </div>
+            <div class="estrutura-field">
+              <span class="estrutura-label">Quantidade de máquinas</span>
+              <span class="estrutura-value" id="implSumQtd">—</span>
+            </div>
+          </div>
+          <div class="impl-summary-estrutura">
+            <span class="estrutura-label">Observações gerais</span>
+            <p id="implSumEstrutura">—</p>
+          </div>
+          <div>
+            <span class="estrutura-label">Máquinas / acesso remoto</span>
+            <div id="implSumMaquinasList" class="impl-maquinas-list"></div>
+          </div>
+        </div>
+
+        <div class="card-header-row" style="margin-top:1.5rem;">
+          <h3>Cronograma de implantação</h3>
+          <button type="button" id="showImplEtapaFormBtn" data-requires="write">Adicionar etapa</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Etapa</th>
+                <th>Técnico</th>
+                <th>Data prevista</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="implCronogramaTableBody"></tbody>
+          </table>
+        </div>
+        <div id="implCronogramaEmptyState" class="empty">Nenhuma etapa cadastrada.</div>
+
+        <div class="card-header-row" style="margin-top:1.5rem;">
+          <h3>Reuniões</h3>
+          <button type="button" id="showImplReuniaoFormBtn" data-requires="write">Adicionar anotação</button>
+        </div>
+        <div id="implReuniaoList" class="timeline"></div>
+        <div id="implReuniaoEmptyState" class="empty">Nenhuma reunião registrada.</div>
+
+        <div class="card-header-row" style="margin-top:1.5rem;">
+          <h3>Financeiro da implantação</h3>
+          <button type="button" id="showImplFinanceiroFormBtn" data-requires="write">Adicionar gasto</button>
+        </div>
+        <div class="impl-summary-fields" style="margin-bottom:12px;">
+          <div class="estrutura-field">
+            <span class="estrutura-label">Total de gastos</span>
+            <span class="estrutura-value" id="implFinanceiroTotal">—</span>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Técnico</th>
+                <th>Data</th>
+                <th>Valor</th>
+                <th>Descrição</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="implFinanceiroTableBody"></tbody>
+          </table>
+        </div>
+        <div id="implFinanceiroEmptyState" class="empty">Nenhum gasto registrado.</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: dados da implantação -->
+  <dialog id="implFormModal" class="popup-modal popup-modal-wide" aria-labelledby="implFormModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="implFormModalTitle">Dados da implantação</h2>
+        <button type="button" class="icon-button" data-close-modal="implFormModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="implForm" novalidate>
+        <input type="hidden" id="implId" />
+        <input type="hidden" id="implCliente" />
+
+        <h3 class="form-section-title">Dados gerais</h3>
+        <div class="form-grid">
+          <div class="col-4">
+            <label for="implTecnico">Técnico responsável</label>
+            <div class="combo">
+              <input id="implTecnico" placeholder="Selecione ou digite..." autocomplete="off" />
+              <div id="implTecnicoMenu" class="combo-menu" role="listbox"></div>
+            </div>
+          </div>
+          <div class="col-4">
+            <label for="implStatus">Status</label>
+            <select id="implStatus">
+              <option value="Em andamento">Em andamento</option>
+              <option value="Concluído">Concluído</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+          </div>
+          <div class="col-4">
+            <label for="implEnquadramento">Enquadramento da empresa</label>
+            <select id="implEnquadramento">
+              <option value="">Selecione</option>
+              <option value="Simples Nacional">Simples Nacional</option>
+              <option value="Lucro Real">Lucro Real</option>
+              <option value="Lucro Presumido">Lucro Presumido</option>
+            </select>
+          </div>
+        </div>
+
+        <h3 class="form-section-title">Estrutura do cliente</h3>
+        <div class="form-grid">
+          <div class="col-12"><span class="estrutura-label">Base Gerencial</span></div>
+          <div class="col-3">
+            <label for="implBaseGerencialQtd">Quantidade</label>
+            <input id="implBaseGerencialQtd" type="number" min="0" step="1" />
+          </div>
+          <div class="col-9">
+            <label for="implBaseGerencialDescricao">Descrição</label>
+            <input id="implBaseGerencialDescricao" placeholder="Ex.: nome da base, servidor, observações..." />
+          </div>
+
+          <div class="col-12"><span class="estrutura-label">Base Fiscal</span></div>
+          <div class="col-3">
+            <label for="implBaseFiscalQtd">Quantidade</label>
+            <input id="implBaseFiscalQtd" type="number" min="0" step="1" />
+          </div>
+          <div class="col-9">
+            <label for="implBaseFiscalDescricao">Descrição</label>
+            <input id="implBaseFiscalDescricao" placeholder="Ex.: nome da base, servidor, observações..." />
+          </div>
+
+          <div class="col-12">
+            <label for="implEstrutura">Observações gerais</label>
+            <textarea id="implEstrutura" rows="3" placeholder="Servidores, rede, sistema operacional, particularidades..."></textarea>
+          </div>
+
+          <div class="col-12"><span class="estrutura-label">Máquinas / acesso remoto</span></div>
+          <div class="col-4">
+            <label for="implQtdMaquinas">Quantidade de máquinas</label>
+            <input id="implQtdMaquinas" type="number" min="0" step="1" />
+          </div>
+          <div class="col-12" id="implMaquinasSection" style="display:none">
+            <div id="implMaquinasFields" class="form-grid"></div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit">Salvar dados da implantação</button>
+          <button type="button" id="cancelImplEditBtn" class="ghost">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Modal: etapa do cronograma -->
+  <dialog id="implEtapaFormModal" class="popup-modal popup-modal-medium" aria-labelledby="implEtapaFormModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="implEtapaFormModalTitle">Nova etapa</h2>
+        <button type="button" class="icon-button" data-close-modal="implEtapaFormModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="implEtapaForm" novalidate>
+        <input type="hidden" id="implEtapaId" />
+        <div class="form-grid">
+          <div class="col-12">
+            <label for="implEtapaNome">Etapa</label>
+            <input id="implEtapaNome" placeholder="Ex.: Levantamento de requisitos" required />
+          </div>
+          <div class="col-6">
+            <label for="implEtapaTecnico">Técnico</label>
+            <div class="combo">
+              <input id="implEtapaTecnico" placeholder="Selecione ou digite..." autocomplete="off" />
+              <div id="implEtapaTecnicoMenu" class="combo-menu" role="listbox"></div>
+            </div>
+          </div>
+          <div class="col-3">
+            <label for="implEtapaData">Data prevista</label>
+            <input id="implEtapaData" type="date" />
+          </div>
+          <div class="col-3">
+            <label for="implEtapaStatus">Status</label>
+            <select id="implEtapaStatus">
+              <option value="Pendente">Pendente</option>
+              <option value="Concluído">Concluído</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit">Salvar etapa</button>
+          <button type="button" id="cancelImplEtapaEditBtn" class="ghost">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Modal: anotação de reunião -->
+  <dialog id="implReuniaoFormModal" class="popup-modal popup-modal-medium" aria-labelledby="implReuniaoFormModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="implReuniaoFormModalTitle">Nova anotação de reunião</h2>
+        <button type="button" class="icon-button" data-close-modal="implReuniaoFormModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="implReuniaoForm" novalidate>
+        <input type="hidden" id="implReuniaoId" />
+        <div class="form-grid">
+          <div class="col-12">
+            <label for="implReuniaoData">Data</label>
+            <input id="implReuniaoData" type="date" required />
+          </div>
+          <div class="col-12">
+            <label for="implReuniaoTexto">O que foi conversado</label>
+            <textarea id="implReuniaoTexto" rows="4" placeholder="Resumo da reunião..." required></textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit">Salvar anotação</button>
+          <button type="button" id="cancelImplReuniaoEditBtn" class="ghost">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Modal: gasto do financeiro da implantação -->
+  <dialog id="implFinanceiroFormModal" class="popup-modal popup-modal-medium" aria-labelledby="implFinanceiroFormModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="implFinanceiroFormModalTitle">Novo gasto</h2>
+        <button type="button" class="icon-button" data-close-modal="implFinanceiroFormModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="implFinanceiroForm" novalidate>
+        <input type="hidden" id="implFinanceiroId" />
+        <div class="form-grid">
+          <div class="col-6">
+            <label for="implFinanceiroTecnico">Técnico</label>
+            <div class="combo">
+              <input id="implFinanceiroTecnico" placeholder="Selecione ou digite..." autocomplete="off" required />
+              <div id="implFinanceiroTecnicoMenu" class="combo-menu" role="listbox"></div>
+            </div>
+          </div>
+          <div class="col-3">
+            <label for="implFinanceiroData">Data</label>
+            <input id="implFinanceiroData" type="date" required />
+          </div>
+          <div class="col-3">
+            <label for="implFinanceiroValor">Valor (R$)</label>
+            <input id="implFinanceiroValor" type="number" min="0" step="0.01" placeholder="0,00" required />
+          </div>
+          <div class="col-12">
+            <label for="implFinanceiroDescricao">Descrição do gasto</label>
+            <textarea id="implFinanceiroDescricao" rows="3" placeholder="Ex.: Deslocamento, hospedagem, material..."></textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit">Salvar gasto</button>
+          <button type="button" id="cancelImplFinanceiroEditBtn" class="ghost">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <div id="implPdfArea" aria-hidden="true"></div>
+
+  <script src="script.js?v=14"></script>
+</body>
+</html>

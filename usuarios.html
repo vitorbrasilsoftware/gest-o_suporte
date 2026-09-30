@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Usuários</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=2"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title">
+      <div>
+        <span class="eyebrow">Controle de acesso</span>
+        <h1>Usuários</h1>
+        <p>Libere acessos, defina o perfil de cada pessoa e desative quem não deve mais entrar.</p>
+      </div>
+      <nav class="main-nav" aria-label="Navegacao principal">
+        <a href="index.html">Início</a>
+        <a href="sped.html">SPED</a>
+        <a href="procedimentos.html">Procedimentos</a>
+        <a href="implantacoes.html">Implantação</a>
+        <a href="diario.html">Diário</a>
+        <a href="problemas.html">Problemas</a>
+        <a href="setup.html">Setup</a>
+        <a href="agenda.html">Agenda</a>
+        <a href="forca-vendas.html">Força de Vendas</a>
+        <a class="active" href="usuarios.html">Usuários</a>
+      </nav>
+    </section>
+
+    <section class="card quick-actions" aria-label="Acoes rapidas">
+      <button type="button" id="showUsuarioFormBtn">Cadastrar usuário</button>
+    </section>
+
+    <section class="card">
+      <h2>Perfis de acesso</h2>
+      <div class="access-matrix">
+        <div>
+          <span class="user-role-badge role-admin">Administrador</span>
+          <p>Acesso total: usuários, Setup (técnicos, tipos de procedimento), excluir clientes, importar backup e "Limpar todos".</p>
+        </div>
+        <div>
+          <span class="user-role-badge role-tecnico">Técnico</span>
+          <p>Consulta tudo; cria, edita e exclui SPED, procedimentos, problemas e implantações; cadastra e edita clientes.</p>
+        </div>
+        <div>
+          <span class="user-role-badge role-consulta">Consulta</span>
+          <p>Somente leitura em todas as telas. Pode exportar backup e gerar PDFs.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <h2>Usuários cadastrados</h2>
+      </div>
+      <div id="usuarioSummary" class="summary"></div>
+
+      <div class="toolbar filters">
+        <div class="filter-field">
+          <label for="usuarioSearchInput">Busca</label>
+          <input id="usuarioSearchInput" placeholder="Nome ou e-mail..." />
+        </div>
+        <div class="filter-field">
+          <label for="usuarioPapelFilter">Perfil</label>
+          <select id="usuarioPapelFilter">
+            <option value="">Todos</option>
+            <option value="admin">Administrador</option>
+            <option value="tecnico">Técnico</option>
+            <option value="consulta">Consulta</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="usuarioStatusFilter">Situação</label>
+          <select id="usuarioStatusFilter">
+            <option value="">Todas</option>
+            <option value="ativo">Ativos</option>
+            <option value="inativo">Inativos / pendentes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Perfil</th>
+              <th>Situação</th>
+              <th>Cadastro</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="usuarioTableBody"></tbody>
+        </table>
+      </div>
+      <div id="usuarioEmptyState" class="empty">Nenhum usuário encontrado.</div>
+      <p class="helper-text usuarios-hint">Quem se cadastra por conta própria em "Solicitar acesso" aparece aqui como <strong>Inativo</strong> até ser ativado.</p>
+    </section>
+  </main>
+
+  <!-- Modal: novo usuário -->
+  <dialog id="usuarioFormModal" class="popup-modal popup-modal-medium" aria-labelledby="usuarioFormModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="usuarioFormModalTitle">Cadastrar usuário</h2>
+        <button type="button" class="icon-button" data-close-modal="usuarioFormModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="usuarioForm" novalidate>
+        <div class="form-grid">
+          <div class="col-6">
+            <label for="usuarioNome">Nome</label>
+            <input id="usuarioNome" autocomplete="off" required />
+          </div>
+          <div class="col-6">
+            <label for="usuarioEmail">E-mail</label>
+            <input id="usuarioEmail" type="email" autocomplete="off" required />
+          </div>
+          <div class="col-6">
+            <label for="usuarioSenha">Senha provisória</label>
+            <input id="usuarioSenha" type="password" autocomplete="new-password" minlength="8" required />
+            <small>Mínimo de 8 caracteres. O usuário pode trocá-la em "Alterar senha".</small>
+          </div>
+          <div class="col-6">
+            <label for="usuarioPapel">Perfil</label>
+            <select id="usuarioPapel">
+              <option value="tecnico">Técnico</option>
+              <option value="consulta">Consulta</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit">Cadastrar e liberar acesso</button>
+          <button type="button" id="cancelUsuarioBtn" class="ghost">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=14"></script>
+</body>
+</html>

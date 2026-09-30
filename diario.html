@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diário do Cliente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=2"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title">
+      <div>
+        <span class="eyebrow">Registro de interações</span>
+        <h1>Diário do Cliente</h1>
+        <p>Registre e acompanhe todas as interações com os clientes.</p>
+      </div>
+      <nav class="main-nav" aria-label="Navegacao principal">
+        <a href="index.html">Início</a>
+        <a href="sped.html">SPED</a>
+        <a href="procedimentos.html">Procedimentos</a>
+        <a href="implantacoes.html">Implantação</a>
+        <a class="active" href="diario.html">Diário</a>
+        <a href="problemas.html">Problemas</a>
+        <a href="setup.html">Setup</a>
+        <a href="agenda.html">Agenda</a>
+        <a href="forca-vendas.html">Força de Vendas</a>
+      </nav>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <h2>Histórico por cliente</h2>
+      </div>
+
+      <div class="filter-field" style="max-width:420px;margin-bottom:1.25rem;">
+        <label for="diarioClientSearch">Selecionar cliente</label>
+        <div class="combo">
+          <input id="diarioClientSearch" placeholder="Digite o nome do cliente..." autocomplete="off" />
+          <div id="diarioClientMenu" class="combo-menu" role="listbox"></div>
+        </div>
+      </div>
+
+      <div id="diarioNoClientState" class="empty">Selecione um cliente para ver o histórico.</div>
+
+      <div id="diarioClientView" style="display:none">
+        <div class="card-header-row" style="margin-bottom:0.75rem;">
+          <strong id="diarioSelectedClientName" class="client-name" style="font-size:1.1rem;"></strong>
+          <div class="small-actions">
+            <button type="button" id="showDiarioFormBtn" data-requires="write">Adicionar registro</button>
+            <button type="button" id="diarioClearClientBtn" class="ghost">Limpar seleção</button>
+          </div>
+        </div>
+
+        <div id="diarioSummary" class="summary"></div>
+
+        <div class="diario-layout">
+          <div class="diario-timeline-col">
+            <div id="diarioEntryList" class="timeline" style="margin-top:0.25rem;"></div>
+            <div id="diarioEmptyState" class="empty" style="display:none">Nenhum registro para este cliente.</div>
+          </div>
+
+          <div id="estruturaClienteCard" class="diario-estrutura-col">
+            <h3 class="estrutura-title">Estrutura do Cliente</h3>
+            <div class="estrutura-field">
+              <span class="estrutura-label">Versão banco atual</span>
+              <span class="estrutura-value" id="estruturaVersaoBanco">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="diarioFormModal" class="popup-modal popup-modal-wide" aria-labelledby="diarioFormModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="diarioFormModalTitle">Novo Registro</h2>
+        <button type="button" class="icon-button" data-close-modal="diarioFormModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="diarioForm">
+        <input type="hidden" id="diarioId" />
+        <div class="form-grid">
+          <div class="col-3">
+            <label for="diarioCliente">Cliente</label>
+            <input id="diarioCliente" autocomplete="off" required />
+          </div>
+          <div class="col-3">
+            <label for="diarioData">Data</label>
+            <input id="diarioData" type="date" />
+          </div>
+          <div class="col-3">
+            <label for="diarioTipo">Tipo de interação</label>
+            <select id="diarioTipo" required>
+              <option value="">Selecione</option>
+              <option value="Ligação">Ligação</option>
+              <option value="E-mail">E-mail</option>
+              <option value="Visita">Visita</option>
+              <option value="Reunião">Reunião</option>
+              <option value="Suporte">Suporte</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label for="diarioTecnico">Técnico</label>
+            <input id="diarioTecnico" placeholder="Ex.: Ana" />
+          </div>
+          <div class="col-6">
+            <label for="diarioDescricao">Descrição</label>
+            <input id="diarioDescricao" placeholder="Descreva a interação..." required />
+          </div>
+          <div class="col-6">
+            <label for="diarioObservacao">Observação</label>
+            <input id="diarioObservacao" placeholder="Ex.: cliente solicitará retorno" />
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit">Salvar registro</button>
+          <button type="button" id="cancelDiarioEditBtn" class="ghost">Cancelar edição</button>
+          <button type="button" id="clearDiarioBtn" data-requires="admin" class="danger">Limpar tudo</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=14"></script>
+</body>
+</html>

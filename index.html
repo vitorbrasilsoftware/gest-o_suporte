@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestao Suporte</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=2"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title hero-title">
+      <div>
+        <span class="eyebrow">Gestao Suporte</span>
+        <h1>Painel de controles</h1>
+        <p>Acompanhe SPED e problemas recorrentes em um unico lugar.</p>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80" alt="" />
+        <span>Suporte</span>
+      </div>
+    </section>
+
+    <section class="home-grid">
+      <a class="home-link" href="agenda.html">
+        <strong>Agenda</strong>
+        <small>Acompanhe os agendamentos do dia em um board estilo Kanban.</small>
+      </a>
+
+      <a class="home-link" href="sped.html">
+        <strong>SPED</strong>
+        <small>PIS/COFINS e ICMS/IPI por cliente e competencia.</small>
+      </a>
+
+      <a class="home-link" href="procedimentos.html">
+        <strong>Procedimentos Técnicos</strong>
+        <small>Gerencie e acompanhe os procedimentos técnicos por cliente.</small>
+      </a>
+
+      <a class="home-link" href="implantacoes.html">
+        <strong>Implantação</strong>
+        <small>Lista de clientes em andamento, estrutura, acesso remoto, cronograma e reuniões.</small>
+      </a>
+
+      <a class="home-link" href="diario.html">
+        <strong>Diário do Cliente</strong>
+        <small>Registre ligações, e-mails, visitas e suportes por cliente.</small>
+      </a>
+
+      <a class="home-link" href="problemas.html">
+        <strong>Problemas recorrentes</strong>
+        <small>Erros, responsaveis, Jira e cliente em uma tela separada.</small>
+      </a>
+
+      <a class="home-link" href="setup.html">
+        <strong>Setup</strong>
+        <small>Gerencie clientes, técnicos.</small>
+      </a>
+
+      <a class="home-link" href="forca-vendas.html">
+        <strong>Força de Vendas</strong>
+        <small>Clientes com VEM e/ou Automação de Vendas.</small>
+      </a>
+
+      <a class="home-link" href="usuarios.html">
+        <strong>Usuários</strong>
+        <small>Libere acessos e defina o perfil de cada pessoa.</small>
+      </a>
+
+    </section>
+
+    <section class="card backup-card">
+      <h2>Backup</h2>
+      <p class="helper-text">Exporte uma copia dos dados e guarde o arquivo em uma pasta segura.</p>
+      <div class="actions">
+        <button type="button" id="exportBackupBtn">Exportar backup</button>
+        <label class="button-label" for="importBackupInput" data-requires="admin">Importar backup</label>
+        <input id="importBackupInput" class="hidden-input" type="file" accept="application/json,.json" />
+      </div>
+    </section>
+  </main>
+
+  <button class="ai-fab" id="aiFabBtn" title="Assistente IA" aria-label="Assistente IA">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4z"/>
+      <circle cx="9" cy="13" r="1" fill="currentColor" stroke="none"/>
+      <circle cx="15" cy="13" r="1" fill="currentColor" stroke="none"/>
+      <path d="M9 17c.83.63 1.67.95 3 .95s2.17-.32 3-.95"/>
+      <line x1="8" y1="7" x2="8" y2="3"/>
+      <line x1="16" y1="7" x2="16" y2="3"/>
+    </svg>
+  </button>
+  <span class="ai-fab-tooltip">Assistente IA</span>
+
+  <dialog id="aiModal" class="ai-modal" aria-labelledby="aiModalTitle">
+    <div class="ai-modal-inner">
+      <div class="ai-modal-header">
+        <div class="ai-modal-title-row">
+          <svg class="ai-modal-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V10a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4z"/>
+            <circle cx="9" cy="13" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="15" cy="13" r="1" fill="currentColor" stroke="none"/>
+            <path d="M9 17c.83.63 1.67.95 3 .95s2.17-.32 3-.95"/>
+          </svg>
+          <span id="aiModalTitle">Assistente IA</span>
+        </div>
+        <button class="ai-modal-close" id="aiModalClose" aria-label="Fechar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="ai-chat-history" id="aiChatHistory">
+        <div class="ai-welcome">
+          <p>Olá! Sou o assistente de suporte. Posso ajudar com dúvidas sobre procedimentos, SPED ou clientes.</p>
+        </div>
+      </div>
+
+      <div class="ai-prompt-wrap">
+        <div class="ai-prompt-box" id="aiPromptBox">
+          <div class="ai-file-preview" id="aiFilePreview" style="display:none"></div>
+          <textarea
+            id="aiTextarea"
+            class="ai-textarea"
+            placeholder="Digite sua mensagem..."
+            rows="1"
+            maxlength="4000"
+          ></textarea>
+          <div class="ai-toolbar">
+            <div class="ai-toolbar-left">
+              <button class="ai-tool-btn" id="aiAttachBtn" title="Anexar imagem">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                <input type="file" id="aiFileInput" accept="image/*" style="display:none" />
+              </button>
+              <div class="ai-divider"></div>
+              <button class="ai-toggle-btn" id="aiSearchBtn" data-mode="search" title="Pesquisar na web">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                <span class="ai-toggle-label">Busca</span>
+              </button>
+              <div class="ai-divider"></div>
+              <button class="ai-toggle-btn" id="aiThinkBtn" data-mode="think" title="Raciocínio profundo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 2a8 8 0 0 1 8 8c0 3.5-2 6.5-5 7.7V20a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-2.3C6 16.5 4 13.5 4 10a8 8 0 0 1 8-8z"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+                <span class="ai-toggle-label">Raciocinar</span>
+              </button>
+            </div>
+            <button class="ai-send-btn" id="aiSendBtn" title="Enviar" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=14"></script>
+</body>
+</html>
