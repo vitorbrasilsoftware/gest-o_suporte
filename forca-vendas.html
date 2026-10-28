@@ -7,40 +7,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=13" />
+  <link rel="stylesheet" href="styles.css?v=16" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
-  <script src="auth.js?v=2"></script>
+  <script src="auth.js?v=3"></script>
 </head>
 <body>
   <main class="container">
     <section class="title">
       <div>
-        <span class="eyebrow">Comercial</span>
         <h1>Força de Vendas</h1>
-        <p>Controle quais clientes têm VEM e/ou Automação de Vendas.</p>
       </div>
-      <nav class="main-nav" aria-label="Navegacao principal">
-        <a href="index.html">Início</a>
-        <a href="sped.html">SPED</a>
-        <a href="procedimentos.html">Procedimentos</a>
-        <a href="implantacoes.html">Implantação</a>
-        <a href="diario.html">Diário</a>
-        <a href="problemas.html">Problemas</a>
-        <a href="setup.html">Setup</a>
-        <a href="agenda.html">Agenda</a>
-        <a class="active" href="forca-vendas.html">Força de Vendas</a>
-      </nav>
     </section>
 
     <section class="card">
       <div class="card-header-row">
         <h2>Clientes e produtos</h2>
         <div class="small-actions">
-          <button type="button" id="fvGerarPdfBtn" class="ghost">Gerar relatório PDF</button>
+          <button type="button" id="fvGerarPdfBtn" class="ghost">Gerar relatório</button>
         </div>
       </div>
-      <div id="fvSummary" class="summary"></div>
 
       <div class="toolbar filters">
         <div class="filter-field">
@@ -132,8 +118,38 @@
     </div>
   </dialog>
 
+  <dialog id="fvPdfModal" class="popup-modal popup-modal-medium" aria-labelledby="fvPdfModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="fvPdfModalTitle">Gerar relatório.</h2>
+        <button type="button" class="icon-button" data-close-modal="fvPdfModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="fvPdfForm">
+        <div class="form-grid">
+          <div class="col-12">
+            <select id="fvPdfConteudo">
+              <option value="ambos">VEM e ATS</option>
+              <option value="vem">Somente VEM</option>
+              <option value="automacao">Somente ATS</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="checkbox-field" for="fvPdfTecnico">
+              <input type="checkbox" id="fvPdfTecnico" />
+              <span>Informar o técnico responsável</span>
+            </label>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit">Gerar PDF</button>
+          <button type="button" class="ghost" data-close-modal="fvPdfModal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
   <div id="fvPdfArea" aria-hidden="true"></div>
 
-  <script src="script.js?v=14"></script>
+  <script src="script.js?v=19"></script>
 </body>
 </html>

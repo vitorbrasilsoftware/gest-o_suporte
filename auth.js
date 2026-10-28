@@ -2,7 +2,7 @@
 // Carregado no <head> de todas as páginas, logo após supabase-config.js.
 // - Páginas protegidas: esconde o conteúdo até validar sessão + perfil ativo,
 //   expõe `window.authReady` (Promise<boolean>) que o script.js aguarda antes
-//   de carregar dados, e injeta a barra do usuário (nome, papel, sair).
+//   de carregar dados, e injeta o menu lateral (navegação, usuário, sair).
 // - login.html: fluxo de entrar, criar conta, recuperar e redefinir senha.
 //
 // A segurança real está nas policies RLS (supabase/auth.sql). O que este
@@ -84,7 +84,7 @@
 
       await whenDomReady();
       aplicarPermissoes();
-      montarBarraUsuario();
+      montarMenuLateral();
       avisarAcessoNegado();
       document.documentElement.classList.remove("auth-pending");
       return true;
@@ -132,28 +132,144 @@
     });
   }
 
-  function montarBarraUsuario() {
-    const bar = document.createElement("div");
-    bar.className = "user-bar";
-    bar.innerHTML = `
-      <div class="user-bar-info">
-        <span class="user-bar-avatar" aria-hidden="true">${escapeHtml(iniciais(auth.perfil.nome || auth.user.email))}</span>
-        <div>
-          <strong>${escapeHtml(auth.perfil.nome || auth.user.email)}</strong>
-          <span class="user-role-badge role-${escapeHtml(auth.papel)}">${escapeHtml(PAPEIS[auth.papel] || auth.papel)}</span>
-        </div>
+  // ── Menu lateral ───────────────────────────────────────────────────────────
+  // Única fonte da navegação: as páginas não têm <nav> próprio. Itens com
+  // `admin: true` só aparecem para administradores.
+
+  const ICONES = {
+    inicio: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+    agenda: '<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',
+    sped: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+    procedimentos: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.1L3.5 17.2a2 2 0 0 0 2.8 2.8l5.8-5.8a4 4 0 0 0 5.1-5.4l-2.6 2.6-2.4-.5-.5-2.4z"/>',
+    implantacao: '<path d="M5 15c-1.5 1.3-2 5-2 5s3.7-.5 5-2c.7-.8.7-2.1-.1-2.9a2.1 2.1 0 0 0-2.9-.1z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.9A12.9 12.9 0 0 1 22 2c0 2.7-.8 7.5-6 11a22 22 0 0 1-4 2z"/><path d="M9 12H4s.6-3 2-4c1.6-1.1 5 0 5 0M12 15v5s3-.6 4-2c1.1-1.6 0-5 0-5"/>',
+    diario: '<path d="M4 19.5V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2.5z"/><path d="M4 19.5A2 2 0 0 0 6 21h14M9 7h7M9 11h5"/>',
+    problemas: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+    forcaVendas: '<path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>',
+    clientes: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
+    setup: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+    usuarios: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>',
+    senha: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+    sair: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+    recolher: '<path d="M15 18l-6-6 6-6"/>',
+    menu: '<path d="M4 6h16M4 12h16M4 18h16"/>'
+  };
+
+  const MENU = [
+    { grupo: "Visão geral", itens: [
+      { href: "index.html", label: "Início", icone: "inicio" },
+      { href: "agenda.html", label: "Agenda", icone: "agenda" }
+    ] },
+    { grupo: "Operação", itens: [
+      { href: "sped.html", label: "SPED", icone: "sped" },
+      { href: "procedimentos.html", label: "Procedimentos", icone: "procedimentos" },
+      { href: "implantacoes.html", label: "Implantação", icone: "implantacao" },
+      { href: "diario.html", label: "Diário do Cliente", icone: "diario" },
+      { href: "problemas.html", label: "Problemas", icone: "problemas" },
+      { href: "forca-vendas.html", label: "Força de Vendas", icone: "forcaVendas" }
+    ] },
+    { grupo: "Cadastros", itens: [
+      { href: "clientes.html", label: "Clientes", icone: "clientes" },
+      { href: "setup.html", label: "Setup", icone: "setup", admin: true },
+      { href: "usuarios.html", label: "Usuários", icone: "usuarios", admin: true }
+    ] }
+  ];
+
+  const SIDEBAR_KEY = "gs.sidebarRecolhido";
+
+  function icone(nome) {
+    return `<svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONES[nome]}</svg>`;
+  }
+
+  function lerPreferencia(chave) {
+    try { return localStorage.getItem(chave); } catch { return null; }
+  }
+
+  function gravarPreferencia(chave, valor) {
+    try { localStorage.setItem(chave, valor); } catch { /* sem storage: só não lembra */ }
+  }
+
+  function montarMenuLateral() {
+    const nome = auth.perfil.nome || auth.user.email;
+    const grupos = MENU.map(({ grupo, itens }) => {
+      const visiveis = itens.filter((item) => !item.admin || auth.can("admin"));
+      if (!visiveis.length) return "";
+      const links = visiveis.map((item) => {
+        const ativo = item.href === paginaAtual;
+        return `<a class="sidebar-link${ativo ? " active" : ""}" href="${item.href}" title="${escapeHtml(item.label)}"${ativo ? ' aria-current="page"' : ""}>
+            ${icone(item.icone)}<span class="sidebar-label">${escapeHtml(item.label)}</span>
+          </a>`;
+      }).join("");
+      return `<div class="sidebar-group"><span class="sidebar-group-title">${escapeHtml(grupo)}</span>${links}</div>`;
+    }).join("");
+
+    const sidebar = document.createElement("aside");
+    sidebar.className = "app-sidebar";
+    sidebar.id = "appSidebar";
+    sidebar.setAttribute("aria-label", "Menu principal");
+    sidebar.innerHTML = `
+      <div class="sidebar-brand">
+        <a class="sidebar-brand-link" href="index.html" title="Gestão Suporte">
+          <span class="sidebar-logo" aria-hidden="true">GS</span>
+          <span class="sidebar-brand-text"><strong>Gestão</strong><small>Suporte</small></span>
+        </a>
+        <button type="button" class="sidebar-collapse" id="sidebarCollapseBtn" aria-label="Recolher menu" title="Recolher menu">${icone("recolher")}</button>
       </div>
-      <div class="user-bar-actions">
-        ${auth.can("admin") ? '<a class="user-bar-link" href="usuarios.html">Usuários</a>' : ""}
-        <button type="button" class="ghost" id="authChangePasswordBtn">Alterar senha</button>
-        <button type="button" class="ghost" id="authLogoutBtn">Sair</button>
+      <nav class="sidebar-nav">${grupos}</nav>
+      <div class="sidebar-user">
+        <div class="sidebar-user-info" title="${escapeHtml(nome)}">
+          <span class="sidebar-avatar" aria-hidden="true">${escapeHtml(iniciais(nome))}</span>
+          <span class="sidebar-user-text">
+            <strong>${escapeHtml(nome)}</strong>
+            <span class="user-role-badge role-${escapeHtml(auth.papel)}">${escapeHtml(PAPEIS[auth.papel] || auth.papel)}</span>
+          </span>
+        </div>
+        <div class="sidebar-user-actions">
+          <button type="button" class="sidebar-action" id="authChangePasswordBtn" title="Alterar senha">${icone("senha")}<span class="sidebar-label">Alterar senha</span></button>
+          <button type="button" class="sidebar-action sidebar-action--sair" id="authLogoutBtn" title="Sair">${icone("sair")}<span class="sidebar-label">Sair</span></button>
+        </div>
       </div>`;
 
-    const container = document.querySelector("main.container") || document.body;
-    container.insertBefore(bar, container.firstChild);
+    const topbar = document.createElement("header");
+    topbar.className = "mobile-topbar";
+    topbar.innerHTML = `
+      <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menu" aria-controls="appSidebar" aria-expanded="false">${icone("menu")}</button>
+      <a class="sidebar-brand-link" href="index.html">
+        <span class="sidebar-logo" aria-hidden="true">GS</span>
+        <span class="sidebar-brand-text"><strong>Gestão</strong><small>Suporte</small></span>
+      </a>`;
 
-    bar.querySelector("#authLogoutBtn").addEventListener("click", signOut);
-    bar.querySelector("#authChangePasswordBtn").addEventListener("click", abrirAlterarSenha);
+    const backdrop = document.createElement("div");
+    backdrop.className = "sidebar-backdrop";
+
+    document.body.prepend(topbar, sidebar, backdrop);
+    document.body.classList.add("has-sidebar");
+    if (lerPreferencia(SIDEBAR_KEY) === "1") document.body.classList.add("sidebar-collapsed");
+
+    const menuBtn = topbar.querySelector("#mobileMenuBtn");
+    const abrirMobile = (aberto) => {
+      document.body.classList.toggle("sidebar-open", aberto);
+      menuBtn.setAttribute("aria-expanded", String(aberto));
+    };
+    menuBtn.addEventListener("click", () => abrirMobile(!document.body.classList.contains("sidebar-open")));
+    backdrop.addEventListener("click", () => abrirMobile(false));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && document.body.classList.contains("sidebar-open")) abrirMobile(false);
+    });
+
+    sidebar.querySelector("#sidebarCollapseBtn").addEventListener("click", () => {
+      const recolhido = document.body.classList.toggle("sidebar-collapsed");
+      gravarPreferencia(SIDEBAR_KEY, recolhido ? "1" : "0");
+      const rotulo = recolhido ? "Expandir menu" : "Recolher menu";
+      const btn = sidebar.querySelector("#sidebarCollapseBtn");
+      btn.setAttribute("aria-label", rotulo);
+      btn.title = rotulo;
+    });
+
+    sidebar.querySelector("#authLogoutBtn").addEventListener("click", signOut);
+    sidebar.querySelector("#authChangePasswordBtn").addEventListener("click", () => {
+      abrirMobile(false);
+      abrirAlterarSenha();
+    });
   }
 
   function avisarAcessoNegado() {

@@ -91,6 +91,12 @@ const refs = {
   issueEmptyState: document.getElementById("issueEmptyState"),
   exportBackupBtn: document.getElementById("exportBackupBtn"),
   importBackupInput: document.getElementById("importBackupInput"),
+  homeTodayStats: document.getElementById("homeTodayStats"),
+  homeTodayLabel: document.getElementById("homeTodayLabel"),
+  homeTodayList: document.getElementById("homeTodayList"),
+  homeTodayEmpty: document.getElementById("homeTodayEmpty"),
+  homeAtrasadosList: document.getElementById("homeAtrasadosList"),
+  homeAtrasadosEmpty: document.getElementById("homeAtrasadosEmpty"),
   showProcFormBtn: document.getElementById("showProcFormBtn"),
   procFormModal: document.getElementById("procFormModal"),
   procForm: document.getElementById("procForm"),
@@ -174,7 +180,6 @@ const refs = {
   clienteShowMoreBtn: document.getElementById("clienteShowMoreBtn"),
   fvTableBody: document.getElementById("fvTableBody"),
   fvEmptyState: document.getElementById("fvEmptyState"),
-  fvSummary: document.getElementById("fvSummary"),
   fvLimparFiltrosBtn: document.getElementById("fvLimparFiltrosBtn"),
   fvFormModal: document.getElementById("fvFormModal"),
   fvForm: document.getElementById("fvForm"),
@@ -192,6 +197,10 @@ const refs = {
   fvProdutoFilter: document.getElementById("fvProdutoFilter"),
   fvGerarPdfBtn: document.getElementById("fvGerarPdfBtn"),
   fvPdfArea: document.getElementById("fvPdfArea"),
+  fvPdfModal: document.getElementById("fvPdfModal"),
+  fvPdfForm: document.getElementById("fvPdfForm"),
+  fvPdfConteudo: document.getElementById("fvPdfConteudo"),
+  fvPdfTecnico: document.getElementById("fvPdfTecnico"),
   agendaPrevMonth: document.getElementById("agendaPrevMonth"),
   agendaNextMonth: document.getElementById("agendaNextMonth"),
   agendaTodayBtn: document.getElementById("agendaTodayBtn"),
@@ -393,6 +402,7 @@ addListener(refs.diarioMonthFilter, "input", renderDiario);
 addListener(refs.showClienteFormBtn, "click", focusClienteForm);
 addListener(refs.clienteForm, "submit", saveCliente);
 addListener(refs.clienteCpfCnpj, "input", onClienteCpfCnpjInput);
+addListener(refs.clienteCpfCnpj, "paste", onClienteCpfCnpjPaste);
 addListener(refs.clienteTipoDocumento, "change", onClienteTipoDocumentoChange);
 addListener(refs.cancelClienteEditBtn, "click", cancelClienteEdit);
 addListener(refs.clienteTipoEmpresa, "change", onClienteTipoChange);
@@ -468,7 +478,11 @@ window.addEventListener("afterprint", () => {
   document.body.classList.remove("impl-pdf-print");
   if (refs.implPdfArea) refs.implPdfArea.innerHTML = "";
 });
-addListener(refs.fvGerarPdfBtn, "click", generateForcaVendasPdf);
+addListener(refs.fvGerarPdfBtn, "click", () => {
+  if (refs.fvPdfTecnico) refs.fvPdfTecnico.checked = false; // técnico fica de fora por padrão
+  openModal(refs.fvPdfModal, refs.fvPdfConteudo);
+});
+addListener(refs.fvPdfForm, "submit", generateForcaVendasPdf);
 addListener(refs.usuarioSearchInput, "input", renderUsuarios);
 addListener(refs.usuarioPapelFilter, "change", renderUsuarios);
 addListener(refs.usuarioStatusFilter, "change", renderUsuarios);
@@ -476,7 +490,15 @@ addListener(refs.showUsuarioFormBtn, "click", focusUsuarioForm);
 addListener(refs.usuarioForm, "submit", saveUsuario);
 addListener(refs.cancelUsuarioBtn, "click", () => closeModal(refs.usuarioFormModal));
 window.addEventListener("unhandledrejection", (event) => {
-  if (event.reason && event.reason.isPermissionError) alert(event.reason.message);
+  const reason = event.reason;
+  if (!reason) return;
+  if (reason.isPermissionError) {
+    alert(reason.message);
+  } else if (reason.code && reason.message) {
+    // Erro devolvido pelo Supabase (ex.: coluna inexistente): sem isso a
+    // gravação falha em silêncio e o botão parece não fazer nada.
+    alert(`Não foi possível salvar: ${reason.message}`);
+  }
 });
 window.addEventListener("afterprint", () => {
   document.body.classList.remove("fv-pdf-print");
@@ -534,6 +556,7 @@ async function initApp() {
   if (refs.implAbertasList) safeRender(renderImplAbertas, "implAbertas");
   if (refs.clienteForm) initCollapseSections();
   if (refs.fvTableBody) safeRender(renderForcaVendas, "forcaVendas");
+  if (refs.homeTodayList) safeRender(renderHomeToday, "homeToday");
   if (refs.usuarioTableBody) safeRender(renderUsuarios, "usuarios");
 
   populateProcTipoSelect();
@@ -730,6 +753,7 @@ function refreshCurrentView() {
   if (refs.implForm) safeRender(renderImplantacao, "implantacao");
   if (refs.implAbertasList) safeRender(renderImplAbertas, "implAbertas");
   if (refs.fvTableBody) safeRender(renderForcaVendas, "forcaVendas");
+  if (refs.homeTodayList) safeRender(renderHomeToday, "homeToday");
   populateProcTipoSelect();
 }
 
@@ -2690,10 +2714,11 @@ function formatCpfCnpj(value) {
 }
 
 // O campo recebe só os caracteres do documento (sem pontuação): 11 para CPF, 14 para CNPJ.
+// O limite fica no JS (não em maxlength): o maxlength cortaria o texto colado com
+// pontuação antes de ela ser removida (ex.: "12.345.678/0001-90" virava "12.345.678/000").
 function onClienteTipoDocumentoChange() {
   if (!refs.clienteCpfCnpj) return;
   const isCpf = refs.clienteTipoDocumento && refs.clienteTipoDocumento.value === "CPF";
-  refs.clienteCpfCnpj.maxLength = isCpf ? 11 : 14;
   refs.clienteCpfCnpj.inputMode = isCpf ? "numeric" : "text";
   refs.clienteCpfCnpj.placeholder = isCpf ? "11 dígitos, sem pontuação" : "14 caracteres, sem pontuação";
   if (refs.clienteCpfCnpjLabel) refs.clienteCpfCnpjLabel.textContent = isCpf ? "CPF" : "CNPJ";
@@ -2708,6 +2733,21 @@ function onClienteCpfCnpjInput() {
     : normalizeCpfCnpj(refs.clienteCpfCnpj.value);
   const limpo = doc.slice(0, isCpf ? 11 : 14);
   if (limpo !== refs.clienteCpfCnpj.value) refs.clienteCpfCnpj.value = limpo;
+}
+
+// Ao colar um documento inteiro (com ou sem pontuação), ajusta o tipo pelo tamanho:
+// 11 dígitos = CPF, 14 caracteres = CNPJ.
+function onClienteCpfCnpjPaste(event) {
+  const texto = event.clipboardData ? event.clipboardData.getData("text") : "";
+  const doc = normalizeCpfCnpj(texto);
+  if (!doc) return;
+  event.preventDefault();
+  if (refs.clienteTipoDocumento) {
+    if (/^\d{11}$/.test(doc)) refs.clienteTipoDocumento.value = "CPF";
+    else if (doc.length === 14) refs.clienteTipoDocumento.value = "CNPJ";
+  }
+  refs.clienteCpfCnpj.value = doc;
+  onClienteTipoDocumentoChange();
 }
 
 function focusClienteForm() {
@@ -3023,7 +3063,6 @@ function renderForcaVendas() {
       refs.fvEmptyState.textContent = "Pesquise um cliente pelo nome ou CPF/CNPJ, ou escolha um filtro de produto.";
       refs.fvEmptyState.style.display = "block";
     }
-    renderFvSummary(state.clientes, "Clientes cadastrados");
     return;
   }
 
@@ -3046,7 +3085,6 @@ function renderForcaVendas() {
     refs.fvEmptyState.textContent = "Nenhum cliente encontrado.";
     refs.fvEmptyState.style.display = filtered.length ? "none" : "block";
   }
-  renderFvSummary(filtered, "Clientes filtrados");
 }
 
 function renderFvProdutoBadge(tem, licencas) {
@@ -3070,24 +3108,6 @@ function renderFvTableRow(item) {
       </div>
     </td>
   </tr>`;
-}
-
-function renderFvSummary(items, totalLabel) {
-  if (!refs.fvSummary) return;
-  const total = items.length;
-  const comVem = items.filter((i) => i.vem).length;
-  const comAutomacao = items.filter((i) => i.automacaoVendas).length;
-  const comAmbos = items.filter((i) => i.vem && i.automacaoVendas).length;
-  const licencasVem = items.reduce((sum, i) => sum + (i.vemLicencas || 0), 0);
-  const licencasAutomacao = items.reduce((sum, i) => sum + (i.automacaoVendasLicencas || 0), 0);
-  refs.fvSummary.innerHTML = `
-    <div class="summary-item"><strong>${total}</strong><span>${escapeHtml(totalLabel)}</span></div>
-    <div class="summary-item"><strong>${comVem}</strong><span>Com VEM</span></div>
-    <div class="summary-item"><strong>${comAutomacao}</strong><span>Com Automação de Vendas</span></div>
-    <div class="summary-item"><strong>${comAmbos}</strong><span>Com os dois</span></div>
-    <div class="summary-item"><strong>${licencasVem}</strong><span>Licenças VEM</span></div>
-    <div class="summary-item"><strong>${licencasAutomacao}</strong><span>Licenças Automação</span></div>
-  `;
 }
 
 function limparFiltrosForcaVendas() {
@@ -3149,35 +3169,44 @@ async function saveForcaVendas(event) {
   closeModal(refs.fvFormModal);
 }
 
-function generateForcaVendasPdf() {
+function generateForcaVendasPdf(event) {
+  if (event) event.preventDefault();
   if (!refs.fvPdfArea) return;
 
-  const clientesVem = state.clientes
-    .filter((item) => item.vem)
-    .sort((a, b) => String(a.nome || "").localeCompare(String(b.nome || "")));
-  const clientesAutomacao = state.clientes
-    .filter((item) => item.automacaoVendas)
+  const conteudo = refs.fvPdfConteudo ? refs.fvPdfConteudo.value : "ambos";
+  const incluirVem = conteudo !== "automacao";
+  const incluirAutomacao = conteudo !== "vem";
+  const incluirTecnico = Boolean(refs.fvPdfTecnico && refs.fvPdfTecnico.checked);
+
+  // Tabela única: um cliente por linha, com as licenças de cada produto e o total.
+  // O filtro escolhido define quais clientes entram e quais colunas aparecem.
+  const clientes = state.clientes
+    .filter((item) => (incluirVem && item.vem) || (incluirAutomacao && item.automacaoVendas))
     .sort((a, b) => String(a.nome || "").localeCompare(String(b.nome || "")));
 
   const now = new Date();
+  const licencasVem = (item) => (item.vem ? item.vemLicencas || 0 : 0);
+  const licencasAutomacao = (item) => (item.automacaoVendas ? item.automacaoVendasLicencas || 0 : 0);
+  const totalCliente = (item) => (incluirVem ? licencasVem(item) : 0) + (incluirAutomacao ? licencasAutomacao(item) : 0);
+  const celulaQtd = (temProduto, qtd) => (temProduto ? `<span class="pdf-qtd-pill">${qtd}</span>` : "—");
+  const totalVem = clientes.reduce((sum, item) => sum + licencasVem(item), 0);
+  const totalAutomacao = clientes.reduce((sum, item) => sum + licencasAutomacao(item), 0);
+  const totalGeral = clientes.reduce((sum, item) => sum + totalCliente(item), 0);
+  const mostrarTotal = incluirVem && incluirAutomacao;
 
-  const renderProdutoSection = (titulo, corClasse, clientes, campoLicencas) => {
-    if (!clientes.length) return "";
-    const totalVendedores = clientes.reduce((sum, item) => sum + (item[campoLicencas] || 0), 0);
-    return `
-    <div class="pdf-section pdf-product-section ${corClasse}">
-      <div class="pdf-product-header">
-        <h2 class="pdf-section-title">${titulo}</h2>
-        <span class="pdf-count-badge">${clientes.length} ${clientes.length === 1 ? "cliente" : "clientes"}</span>
-      </div>
+  const tabela = !clientes.length
+    ? `<div class="pdf-empty">Nenhum cliente encontrado.</div>`
+    : `
       <table class="pdf-table pdf-table--fv">
         <thead>
           <tr>
             <th class="pdf-col-idx">#</th>
             <th>Cliente</th>
             <th>CPF/CNPJ</th>
-            <th>Técnico responsável</th>
-            <th class="pdf-col-qtd">Quant. Vendedores</th>
+            ${incluirTecnico ? `<th>Técnico responsável</th>` : ""}
+            ${incluirVem ? `<th class="pdf-col-qtd">VEM</th>` : ""}
+            ${incluirAutomacao ? `<th class="pdf-col-qtd">ATS</th>` : ""}
+            ${mostrarTotal ? `<th class="pdf-col-qtd">Total</th>` : ""}
           </tr>
         </thead>
         <tbody>
@@ -3185,29 +3214,39 @@ function generateForcaVendasPdf() {
             <td class="pdf-col-idx">${idx + 1}</td>
             <td>${escapeHtml(item.nome)}</td>
             <td>${escapeHtml(formatCpfCnpj(item.cpfCnpj) || "—")}</td>
-            <td>${escapeHtml(item.fvTecnico || "—")}</td>
-            <td class="pdf-col-qtd"><span class="pdf-qtd-pill">${item[campoLicencas] || 0}</span></td>
+            ${incluirTecnico ? `<td>${escapeHtml(item.fvTecnico || "—")}</td>` : ""}
+            ${incluirVem ? `<td class="pdf-col-qtd">${celulaQtd(item.vem, licencasVem(item))}</td>` : ""}
+            ${incluirAutomacao ? `<td class="pdf-col-qtd">${celulaQtd(item.automacaoVendas, licencasAutomacao(item))}</td>` : ""}
+            ${mostrarTotal ? `<td class="pdf-col-qtd"><span class="pdf-qtd-pill">${totalCliente(item)}</span></td>` : ""}
           </tr>`).join("")}
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="4">Total de vendedores licenciados</td>
-            <td class="pdf-col-qtd">${totalVendedores}</td>
+            <td colspan="${incluirTecnico ? 4 : 3}">Total —${clientes.length} ${clientes.length === 1 ? "cliente" : "clientes"}</td>
+            ${incluirVem ? `<td class="pdf-col-qtd">${totalVem}</td>` : ""}
+            ${incluirAutomacao ? `<td class="pdf-col-qtd">${totalAutomacao}</td>` : ""}
+            ${mostrarTotal ? `<td class="pdf-col-qtd">${totalGeral}</td>` : ""}
           </tr>
         </tfoot>
-      </table>
-    </div>`;
-  };
+      </table>`;
+
+  const subtitulo = {
+    ambos: "VEM e Automação de Vendas (ATS)",
+    vem: "Somente clientes com VEM",
+    automacao: "Somente clientes com Automação de Vendas (ATS)",
+  }[conteudo] || "";
 
   refs.fvPdfArea.innerHTML = `
     <div class="pdf-header pdf-header--fv">
       <h1>Relatório de Força de Vendas</h1>
+      <p class="pdf-subtitle">${escapeHtml(subtitulo)}</p>
       <div class="pdf-meta">Gerado em ${escapeHtml(now.toLocaleDateString("pt-BR"))} às ${escapeHtml(now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }))}</div>
     </div>
 
-    ${renderProdutoSection("Clientes com VEM", "pdf-product-vem", clientesVem, "vemLicencas")}
-    ${renderProdutoSection("Clientes com Automação de Vendas", "pdf-product-automacao", clientesAutomacao, "automacaoVendasLicencas")}
+    <div class="pdf-section">${tabela}</div>
   `;
+
+  closeModal(refs.fvPdfModal);
 
   // Paisagem só neste relatório: @page não pode depender de classe no body,
   // então a regra é injetada aqui e removida no afterprint.
@@ -4530,6 +4569,85 @@ async function saveAgendaStatus(id, type, newStatus) {
   }
 }
 
+
+// ── Home: resumo do dia ──────────────────────────────────────────────────────
+
+const HOME_FINAL_STATUS = {
+  proc: ["concluido", "cancelado"],
+  sped: ["corrigido", "entregue"],
+};
+
+function storageDateKey(stored) {
+  const input = storageToInputDate(stored);
+  return /^\d{4}-\d{2}-\d{2}$/.test(input) ? input.replace(/-/g, "") : "";
+}
+
+function isHomeItemFinalizado(item) {
+  return HOME_FINAL_STATUS[item._type].includes(normalizeText(item.status));
+}
+
+function renderHomeToday() {
+  if (!refs.homeTodayList) return;
+
+  const todayKey = storageDateKey(todayAsStorageDate());
+  const hoje = [];
+  const atrasados = [];
+  Object.entries(getAgendaItemsByDate()).forEach(([date, items]) => {
+    const key = storageDateKey(date);
+    if (key === todayKey) hoje.push(...items);
+    else if (key && key < todayKey) atrasados.push(...items.filter((i) => !isHomeItemFinalizado(i)));
+  });
+  atrasados.sort((a, b) => storageDateKey(a.dataAgendamento).localeCompare(storageDateKey(b.dataAgendamento)));
+
+  const pendentesHoje = hoje.filter((i) => !isHomeItemFinalizado(i)).length;
+  const implAndamento = state.implantacoes.filter((i) => (i.status || "Em andamento") === "Em andamento").length;
+
+  if (refs.homeTodayLabel) {
+    const label = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+    refs.homeTodayLabel.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+  }
+
+  if (refs.homeTodayStats) {
+    const stats = [
+      { label: "Agendados hoje", value: hoje.length, href: "agenda.html" },
+      { label: "Pendentes hoje", value: pendentesHoje, href: "agenda.html" },
+      { label: "Atrasados", value: atrasados.length, href: "procedimentos.html", alert: atrasados.length > 0 },
+      { label: "Implantações em andamento", value: implAndamento, href: "implantacoes.html" },
+    ];
+    refs.homeTodayStats.innerHTML = stats.map((s) => `
+      <a class="today-stat${s.alert ? " today-stat--alert" : ""}" href="${s.href}">
+        <span class="today-stat-value">${s.value}</span>
+        <span class="today-stat-label">${escapeHtml(s.label)}</span>
+      </a>`).join("");
+  }
+
+  refs.homeTodayList.innerHTML = hoje.map((item) => renderHomeItem(item, false)).join("");
+  if (refs.homeTodayEmpty) refs.homeTodayEmpty.style.display = hoje.length ? "none" : "block";
+
+  if (refs.homeAtrasadosList) {
+    refs.homeAtrasadosList.innerHTML = atrasados.map((item) => renderHomeItem(item, true)).join("");
+  }
+  if (refs.homeAtrasadosEmpty) refs.homeAtrasadosEmpty.style.display = atrasados.length ? "none" : "block";
+}
+
+function renderHomeItem(item, showDate) {
+  const isProc = item._type === "proc";
+  const horario = item.horario || item.horarioAgendamento || "";
+  const quando = showDate ? formatDate(item.dataAgendamento) : horario || "—";
+  const tipo = isProc ? item.tipo : [item.tipo, item.competencia].filter(Boolean).join(" · ");
+  return `
+    <li>
+      <a class="today-item${isHomeItemFinalizado(item) ? " today-item--done" : ""}" href="${isProc ? "procedimentos.html" : "sped.html"}">
+        <span class="today-item-time">${escapeHtml(quando)}</span>
+        <span class="today-item-main">
+          <strong>${escapeHtml(item.cliente || "")}</strong>
+          <small>${escapeHtml(tipo || "")}${item.tecnico ? ` · ${escapeHtml(item.tecnico)}` : ""}</small>
+        </span>
+        <span class="agenda-badge ${isProc ? "agenda-badge--proc" : "agenda-badge--sped"}">${isProc ? "Proc" : "SPED"}</span>
+        <span class="status ${getStatusClass(item.status)}">${escapeHtml(item.status === "Em correcao" ? "Em correção" : item.status || "")}</span>
+      </a>
+    </li>`;
+}
 // ── Assistente IA ─────────────────────────────────────────────────────────────
 
 (function () {
