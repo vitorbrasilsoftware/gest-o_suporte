@@ -7,18 +7,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=13" />
+  <link rel="stylesheet" href="styles.css?v=16" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
-  <script src="auth.js?v=2"></script>
+  <script src="auth.js?v=3"></script>
 </head>
 <body>
   <main class="container">
     <section class="title hero-title">
       <div>
-        <span class="eyebrow">Gestao Suporte</span>
         <h1>Painel de controles</h1>
-        <p>Acompanhe SPED e problemas recorrentes em um unico lugar.</p>
       </div>
       <div class="hero-visual" aria-hidden="true">
         <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80" alt="" />
@@ -26,52 +24,31 @@
       </div>
     </section>
 
-    <section class="home-grid">
-      <a class="home-link" href="agenda.html">
-        <strong>Agenda</strong>
-        <small>Acompanhe os agendamentos do dia em um board estilo Kanban.</small>
-      </a>
+    <section class="today-stats" id="homeTodayStats" aria-label="Resumo do dia"></section>
 
-      <a class="home-link" href="sped.html">
-        <strong>SPED</strong>
-        <small>PIS/COFINS e ICMS/IPI por cliente e competencia.</small>
-      </a>
+    <section class="today-grid">
+      <article class="card today-card">
+        <div class="today-card-head">
+          <div>
+            <h2>Agendados para hoje</h2>
+            <p class="helper-text" id="homeTodayLabel"></p>
+          </div>
+          <a class="today-card-link" href="agenda.html">Abrir agenda</a>
+        </div>
+        <ul class="today-list" id="homeTodayList"></ul>
+        <p class="empty today-empty" id="homeTodayEmpty">Nenhum procedimento ou SPED agendado para hoje.</p>
+      </article>
 
-      <a class="home-link" href="procedimentos.html">
-        <strong>Procedimentos Técnicos</strong>
-        <small>Gerencie e acompanhe os procedimentos técnicos por cliente.</small>
-      </a>
-
-      <a class="home-link" href="implantacoes.html">
-        <strong>Implantação</strong>
-        <small>Lista de clientes em andamento, estrutura, acesso remoto, cronograma e reuniões.</small>
-      </a>
-
-      <a class="home-link" href="diario.html">
-        <strong>Diário do Cliente</strong>
-        <small>Registre ligações, e-mails, visitas e suportes por cliente.</small>
-      </a>
-
-      <a class="home-link" href="problemas.html">
-        <strong>Problemas recorrentes</strong>
-        <small>Erros, responsaveis, Jira e cliente em uma tela separada.</small>
-      </a>
-
-      <a class="home-link" href="setup.html">
-        <strong>Setup</strong>
-        <small>Gerencie clientes, técnicos.</small>
-      </a>
-
-      <a class="home-link" href="forca-vendas.html">
-        <strong>Força de Vendas</strong>
-        <small>Clientes com VEM e/ou Automação de Vendas.</small>
-      </a>
-
-      <a class="home-link" href="usuarios.html">
-        <strong>Usuários</strong>
-        <small>Libere acessos e defina o perfil de cada pessoa.</small>
-      </a>
-
+      <article class="card today-card">
+        <div class="today-card-head">
+          <div>
+            <h2>Atrasados</h2>
+            <p class="helper-text">Agendados em dias anteriores e ainda não finalizados.</p>
+          </div>
+        </div>
+        <ul class="today-list" id="homeAtrasadosList"></ul>
+        <p class="empty today-empty" id="homeAtrasadosEmpty">Nada atrasado. 👍</p>
+      </article>
     </section>
 
     <section class="card backup-card">
@@ -156,6 +133,6 @@
     </div>
   </dialog>
 
-  <script src="script.js?v=14"></script>
+  <script src="script.js?v=15"></script>
 </body>
 </html>

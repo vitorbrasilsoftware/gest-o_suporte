@@ -7,10 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=13" />
+  <link rel="stylesheet" href="styles.css?v=14" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
-  <script src="auth.js?v=2"></script>
+  <script src="auth.js?v=3"></script>
 </head>
 <body>
   <main class="container">
@@ -18,19 +18,7 @@
       <div>
         <span class="eyebrow">Cadastro</span>
         <h1>Clientes</h1>
-        <p>Gerencie os clientes, prioridades e envio de SPED.</p>
       </div>
-      <nav class="main-nav" aria-label="Navegacao principal">
-        <a href="index.html">Início</a>
-        <a href="sped.html">SPED</a>
-        <a href="procedimentos.html">Procedimentos</a>
-        <a href="implantacoes.html">Implantação</a>
-        <a href="diario.html">Diário</a>
-        <a href="problemas.html">Problemas</a>
-        <a class="active" href="clientes.html">Clientes</a>
-        <a href="agenda.html">Agenda</a>
-        <a href="forca-vendas.html">Força de Vendas</a>
-      </nav>
     </section>
 
     <section class="card quick-actions" aria-label="Acoes rapidas">
@@ -118,7 +106,7 @@
           </div>
           <div class="col-3">
             <label for="clienteCpfCnpj" id="clienteCpfCnpjLabel">CNPJ</label>
-            <input id="clienteCpfCnpj" placeholder="14 caracteres, sem pontuação" maxlength="14" autocomplete="off" required />
+            <input id="clienteCpfCnpj" placeholder="14 caracteres, sem pontuação" autocomplete="off" required />
           </div>
           <div class="col-6">
             <label for="clienteTelefone">Telefone</label>
