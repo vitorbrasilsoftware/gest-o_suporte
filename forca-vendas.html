@@ -7,10 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=16" />
+  <link rel="stylesheet" href="styles.css?v=30" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
-  <script src="auth.js?v=3"></script>
+  <script src="auth.js?v=8"></script>
 </head>
 <body>
   <main class="container">
@@ -66,6 +66,34 @@
         </table>
       </div>
       <div id="fvEmptyState" class="empty">Pesquise o nome de um cliente para ver os aplicativos utilizados.</div>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <div>
+          <h2>Ciência do Financeiro</h2>
+          <p class="helper-text">Gere um link com a lista atual de clientes e licenças e envie ao Financeiro. Quem abrir o link confere a lista e registra a ciência, sem precisar de login.</p>
+        </div>
+        <div class="small-actions">
+          <button type="button" id="fvCienciaNovoBtn" data-requires="write">Gerar link</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="fv-ciencia-table">
+          <thead>
+            <tr>
+              <th>Gerado em</th>
+              <th>Conteúdo</th>
+              <th>Clientes / licenças</th>
+              <th>Situação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="fvCienciaTableBody"></tbody>
+        </table>
+      </div>
+      <div id="fvCienciaEmptyState" class="empty">Nenhum link gerado ainda.</div>
     </section>
   </main>
 
@@ -148,8 +176,58 @@
     </div>
   </dialog>
 
+  <dialog id="fvCienciaModal" class="popup-modal popup-modal-medium" aria-labelledby="fvCienciaModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="fvCienciaModalTitle">Link para o Financeiro</h2>
+        <button type="button" class="icon-button" data-close-modal="fvCienciaModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="fvCienciaForm">
+        <p class="helper-text">O link guarda a lista como está agora. Se algum cliente ou licença mudar depois, gere um novo link.</p>
+        <div class="form-grid">
+          <div class="col-12">
+            <label for="fvCienciaConteudo">Conteúdo</label>
+            <select id="fvCienciaConteudo">
+              <option value="ambos">VEM e ATS</option>
+              <option value="vem">Somente VEM</option>
+              <option value="automacao">Somente ATS</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit">Gerar link</button>
+          <button type="button" class="ghost" data-close-modal="fvCienciaModal">Cancelar</button>
+        </div>
+      </form>
+      <div id="fvCienciaResultado" hidden>
+        <p class="helper-text">Link gerado. Copie e envie ao Financeiro:</p>
+        <div class="fv-ciencia-link-row">
+          <input id="fvCienciaLink" readonly />
+          <button type="button" id="fvCienciaCopiarBtn">Copiar</button>
+        </div>
+        <div class="actions">
+          <button type="button" class="ghost" data-close-modal="fvCienciaModal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="fvCienciaDetalheModal" class="popup-modal popup-modal-wide" aria-labelledby="fvCienciaDetalheTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="fvCienciaDetalheTitle">Ciência por cliente</h2>
+        <button type="button" class="icon-button" data-close-modal="fvCienciaDetalheModal" aria-label="Fechar">X</button>
+      </div>
+      <p class="helper-text" id="fvCienciaDetalheInfo"></p>
+      <div class="table-wrap" id="fvCienciaDetalheBody"></div>
+      <div class="actions">
+        <button type="button" class="ghost" data-close-modal="fvCienciaDetalheModal">Fechar</button>
+      </div>
+    </div>
+  </dialog>
+
   <div id="fvPdfArea" aria-hidden="true"></div>
 
-  <script src="script.js?v=19"></script>
+  <script src="script.js?v=32"></script>
 </body>
 </html>

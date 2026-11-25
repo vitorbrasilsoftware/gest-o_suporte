@@ -16,6 +16,11 @@ const state = {
   tiposProcedimento: [],
   implantacoes: [],
   usuarios: [],
+  fvCiencias: [],
+  escala: null,
+  escalaExcecoes: [],
+  escalaSemana: null,
+  escalaErro: false,
   implSelectedClient: "",
   implSummaryVisible: false,
   activeImplTab: "andamento",
@@ -201,6 +206,112 @@ const refs = {
   fvPdfForm: document.getElementById("fvPdfForm"),
   fvPdfConteudo: document.getElementById("fvPdfConteudo"),
   fvPdfTecnico: document.getElementById("fvPdfTecnico"),
+  fvCienciaNovoBtn: document.getElementById("fvCienciaNovoBtn"),
+  fvCienciaTableBody: document.getElementById("fvCienciaTableBody"),
+  fvCienciaEmptyState: document.getElementById("fvCienciaEmptyState"),
+  fvCienciaModal: document.getElementById("fvCienciaModal"),
+  fvCienciaForm: document.getElementById("fvCienciaForm"),
+  fvCienciaConteudo: document.getElementById("fvCienciaConteudo"),
+  fvCienciaResultado: document.getElementById("fvCienciaResultado"),
+  fvCienciaLink: document.getElementById("fvCienciaLink"),
+  fvCienciaCopiarBtn: document.getElementById("fvCienciaCopiarBtn"),
+  fvCienciaDetalheModal: document.getElementById("fvCienciaDetalheModal"),
+  fvCienciaDetalheInfo: document.getElementById("fvCienciaDetalheInfo"),
+  fvCienciaDetalheBody: document.getElementById("fvCienciaDetalheBody"),
+  escalaPrevWeek: document.getElementById("escalaPrevWeek"),
+  escalaNextWeek: document.getElementById("escalaNextWeek"),
+  escalaTodayBtn: document.getElementById("escalaTodayBtn"),
+  escalaWeekLabel: document.getElementById("escalaWeekLabel"),
+  escalaWeekInfo: document.getElementById("escalaWeekInfo"),
+  escalaInverterSemanaBtn: document.getElementById("escalaInverterSemanaBtn"),
+  escalaInverterDaquiBtn: document.getElementById("escalaInverterDaquiBtn"),
+  escalaNovaExcecaoBtn: document.getElementById("escalaNovaExcecaoBtn"),
+  escalaTurnosGrid: document.getElementById("escalaTurnosGrid"),
+  escalaProximasTable: document.getElementById("escalaProximasTable"),
+  escalaExcecoesBody: document.getElementById("escalaExcecoesBody"),
+  escalaExcecoesEmpty: document.getElementById("escalaExcecoesEmpty"),
+  escalaMostrarPassadas: document.getElementById("escalaMostrarPassadas"),
+  escalaConfigBtn: document.getElementById("escalaConfigBtn"),
+  escalaConfigResumo: document.getElementById("escalaConfigResumo"),
+  escalaConfigModal: document.getElementById("escalaConfigModal"),
+  escalaConfigForm: document.getElementById("escalaConfigForm"),
+  escalaConfigTurnos: document.getElementById("escalaConfigTurnos"),
+  escalaConfigEquipes: document.getElementById("escalaConfigEquipes"),
+  escalaConfigTecnicos: document.getElementById("escalaConfigTecnicos"),
+  escalaSemanaReferencia: document.getElementById("escalaSemanaReferencia"),
+  atuNovaBtn: document.getElementById("atuNovaBtn"),
+  tdiConversa: document.getElementById("tdiConversa"),
+  tdiPromptForm: document.getElementById("tdiPromptForm"),
+  tdiTexto: document.getElementById("tdiTexto"),
+  tdiImagemPreview: document.getElementById("tdiImagemPreview"),
+  tdiAnexarBtn: document.getElementById("tdiAnexarBtn"),
+  tdiArquivo: document.getElementById("tdiArquivo"),
+  tdiCliente: document.getElementById("tdiCliente"),
+  tdiClientMenu: document.getElementById("tdiClientMenu"),
+  tdiEnviarBtn: document.getElementById("tdiEnviarBtn"),
+  tdiListaTitulo: document.getElementById("tdiListaTitulo"),
+  tdiAviso: document.getElementById("tdiAviso"),
+  tdiBusca: document.getElementById("tdiBusca"),
+  tdiAutorFiltroCampo: document.getElementById("tdiAutorFiltroCampo"),
+  tdiAutorFiltro: document.getElementById("tdiAutorFiltro"),
+  tdiLista: document.getElementById("tdiLista"),
+  tdiClienteFiltro: document.getElementById("tdiClienteFiltro"),
+  tdiDataDe: document.getElementById("tdiDataDe"),
+  tdiDataAte: document.getElementById("tdiDataAte"),
+  tdiGridWrap: document.getElementById("tdiGridWrap"),
+  tdiGridBody: document.getElementById("tdiGridBody"),
+  tdiGridTotal: document.getElementById("tdiGridTotal"),
+  tdiListaVazia: document.getElementById("tdiListaVazia"),
+  tdiVerModal: document.getElementById("tdiVerModal"),
+  tdiVerTitulo: document.getElementById("tdiVerTitulo"),
+  tdiVerMeta: document.getElementById("tdiVerMeta"),
+  tdiVerConteudo: document.getElementById("tdiVerConteudo"),
+  tdiVerImagem: document.getElementById("tdiVerImagem"),
+  tdiVerDescricao: document.getElementById("tdiVerDescricao"),
+  tdiCopiarBtn: document.getElementById("tdiCopiarBtn"),
+  tdiExcluirBtn: document.getElementById("tdiExcluirBtn"),
+  usuarioRotinasModal: document.getElementById("usuarioRotinasModal"),
+  usuarioRotinasForm: document.getElementById("usuarioRotinasForm"),
+  usuarioRotinasId: document.getElementById("usuarioRotinasId"),
+  usuarioRotinasInfo: document.getElementById("usuarioRotinasInfo"),
+  usuarioRotinasLista: document.getElementById("usuarioRotinasLista"),
+  usuarioRotinasTodasBtn: document.getElementById("usuarioRotinasTodasBtn"),
+  usuarioRotinasNenhumaBtn: document.getElementById("usuarioRotinasNenhumaBtn"),
+  atuAviso: document.getElementById("atuAviso"),
+  atuSearchInput: document.getElementById("atuSearchInput"),
+  atuTipoFilter: document.getElementById("atuTipoFilter"),
+  atuSituacaoFilter: document.getElementById("atuSituacaoFilter"),
+  atuTecnicoFilter: document.getElementById("atuTecnicoFilter"),
+  atuTableBody: document.getElementById("atuTableBody"),
+  atuEmptyState: document.getElementById("atuEmptyState"),
+  atuFormModal: document.getElementById("atuFormModal"),
+  atuFormModalTitle: document.getElementById("atuFormModalTitle"),
+  atuForm: document.getElementById("atuForm"),
+  atuId: document.getElementById("atuId"),
+  atuTipo: document.getElementById("atuTipo"),
+  atuCliente: document.getElementById("atuCliente"),
+  atuClientMenu: document.getElementById("atuClientMenu"),
+  atuClienteLabel: document.getElementById("atuClienteLabel"),
+  atuLoteRow: document.getElementById("atuLoteRow"),
+  atuClientesChips: document.getElementById("atuClientesChips"),
+  atuLoteInfo: document.getElementById("atuLoteInfo"),
+  atuTecnico: document.getElementById("atuTecnico"),
+  atuDataPrevista: document.getElementById("atuDataPrevista"),
+  atuVersao: document.getElementById("atuVersao"),
+  atuEstacoesRow: document.getElementById("atuEstacoesRow"),
+  atuEstacoes: document.getElementById("atuEstacoes"),
+  atuObservacao: document.getElementById("atuObservacao"),
+  atuRealizada: document.getElementById("atuRealizada"),
+  atuRealizadaEmRow: document.getElementById("atuRealizadaEmRow"),
+  atuRealizadaEm: document.getElementById("atuRealizadaEm"),
+  atuVersaoHelper: document.getElementById("atuVersaoHelper"),
+  escalaExcecaoModal: document.getElementById("escalaExcecaoModal"),
+  escalaExcecaoForm: document.getElementById("escalaExcecaoForm"),
+  escalaExcecaoTecnico: document.getElementById("escalaExcecaoTecnico"),
+  escalaExcecaoInicio: document.getElementById("escalaExcecaoInicio"),
+  escalaExcecaoFim: document.getElementById("escalaExcecaoFim"),
+  escalaExcecaoTurno: document.getElementById("escalaExcecaoTurno"),
+  escalaExcecaoMotivo: document.getElementById("escalaExcecaoMotivo"),
   agendaPrevMonth: document.getElementById("agendaPrevMonth"),
   agendaNextMonth: document.getElementById("agendaNextMonth"),
   agendaTodayBtn: document.getElementById("agendaTodayBtn"),
@@ -483,11 +594,63 @@ addListener(refs.fvGerarPdfBtn, "click", () => {
   openModal(refs.fvPdfModal, refs.fvPdfConteudo);
 });
 addListener(refs.fvPdfForm, "submit", generateForcaVendasPdf);
+addListener(refs.fvCienciaNovoBtn, "click", openFvCienciaModal);
+addListener(refs.fvCienciaForm, "submit", saveFvCiencia);
+addListener(refs.fvCienciaCopiarBtn, "click", () => copyFvCienciaLink(refs.fvCienciaLink.value, refs.fvCienciaCopiarBtn));
+addListener(refs.escalaPrevWeek, "click", () => moveEscalaSemana(-1));
+addListener(refs.escalaNextWeek, "click", () => moveEscalaSemana(1));
+addListener(refs.escalaTodayBtn, "click", () => moveEscalaSemana(0));
+addListener(refs.escalaInverterSemanaBtn, "click", toggleEscalaInversaoSemana);
+addListener(refs.escalaInverterDaquiBtn, "click", inverterEscalaDaqui);
+addListener(refs.escalaNovaExcecaoBtn, "click", () => openEscalaExcecaoModal());
+addListener(refs.escalaMostrarPassadas, "change", renderEscalaExcecoes);
+addListener(refs.escalaProximasTable, "click", onEscalaProximasClick);
+addListener(refs.escalaConfigBtn, "click", openEscalaConfigModal);
+addListener(refs.escalaConfigForm, "submit", saveEscalaConfig);
+addListener(refs.escalaExcecaoForm, "submit", saveEscalaExcecao);
+addListener(refs.atuNovaBtn, "click", () => openAtualizacaoModal());
+addListener(refs.tdiPromptForm, "submit", enviarTdiPrompt);
+addListener(refs.tdiTexto, "input", () => { tdiAutoAltura(); tdiAtualizarEnviar(); });
+addListener(refs.tdiTexto, "keydown", onTdiTextoKeydown);
+addListener(refs.tdiAnexarBtn, "click", () => refs.tdiArquivo.click());
+addListener(refs.tdiArquivo, "change", onTdiArquivoChange);
+addListener(refs.tdiCliente, "focus", openTdiClientMenu);
+addListener(refs.tdiCliente, "input", openTdiClientMenu);
+addListener(refs.tdiCliente, "blur", () => setTimeout(closeTdiClientMenu, 120));
+addListener(refs.tdiBusca, "input", renderTdis);
+addListener(refs.tdiAutorFiltro, "change", renderTdis);
+addListener(refs.tdiClienteFiltro, "change", renderTdis);
+addListener(refs.tdiDataDe, "change", renderTdis);
+addListener(refs.tdiDataAte, "change", renderTdis);
+addListener(refs.tdiGridWrap, "click", onTdiGridClick);
+addListener(refs.tdiGridWrap, "keydown", (e) => { const tr = e.key === "Enter" && e.target.closest("tr[data-tdi-id]"); if (tr) verTdi(tr.getAttribute("data-tdi-id")); });
+addListener(refs.tdiCopiarBtn, "click", copiarTdiAberto);
+addListener(refs.tdiExcluirBtn, "click", excluirTdiAberto);
+addListener(refs.atuForm, "submit", saveAtualizacao);
+addListener(refs.atuTipo, "change", onAtuTipoChange);
+addListener(refs.atuRealizada, "change", onAtuRealizadaChange);
+addListener(refs.atuCliente, "focus", openAtuClientMenu);
+addListener(refs.atuCliente, "input", openAtuClientMenu);
+addListener(refs.atuCliente, "keydown", onAtuClienteKeydown);
+addListener(refs.atuTecnico, "change", () => { renderAtuClientesLote(); if (refs.atuClientMenu && refs.atuClientMenu.classList.contains("open")) renderAtuClientMenu(); });
+addListener(refs.atuCliente, "blur", () => setTimeout(closeAtuClientMenu, 120));
+addListener(refs.atuSearchInput, "input", renderAtualizacoes);
+addListener(refs.atuTipoFilter, "change", renderAtualizacoes);
+addListener(refs.atuSituacaoFilter, "change", renderAtualizacoes);
+addListener(refs.atuTecnicoFilter, "change", renderAtualizacoes);
+addListener(refs.escalaExcecaoInicio, "change", () => {
+  if (refs.escalaExcecaoFim && (!refs.escalaExcecaoFim.value || refs.escalaExcecaoFim.value < refs.escalaExcecaoInicio.value)) {
+    refs.escalaExcecaoFim.value = refs.escalaExcecaoInicio.value;
+  }
+});
 addListener(refs.usuarioSearchInput, "input", renderUsuarios);
 addListener(refs.usuarioPapelFilter, "change", renderUsuarios);
 addListener(refs.usuarioStatusFilter, "change", renderUsuarios);
 addListener(refs.showUsuarioFormBtn, "click", focusUsuarioForm);
 addListener(refs.usuarioForm, "submit", saveUsuario);
+addListener(refs.usuarioRotinasForm, "submit", saveUsuarioRotinas);
+addListener(refs.usuarioRotinasTodasBtn, "click", () => marcarUsuarioRotinas(true));
+addListener(refs.usuarioRotinasNenhumaBtn, "click", () => marcarUsuarioRotinas(false));
 addListener(refs.cancelUsuarioBtn, "click", () => closeModal(refs.usuarioFormModal));
 window.addEventListener("unhandledrejection", (event) => {
   const reason = event.reason;
@@ -528,6 +691,10 @@ async function initApp() {
     await loadData();
     await migrateLocalStorageData();
     if (refs.usuarioTableBody) await loadUsuarios();
+    if (refs.fvCienciaTableBody) await loadFvCiencias();
+    if (refs.escalaTurnosGrid) await loadEscala();
+    if (refs.atuTableBody) await loadAtualizacoes();
+    if (refs.tdiLista) await loadTdis();
   } catch (_) {
     alert("Nao foi possivel conectar ao Supabase. Verifique a configuracao em supabase-config.js.");
     return;
@@ -556,8 +723,12 @@ async function initApp() {
   if (refs.implAbertasList) safeRender(renderImplAbertas, "implAbertas");
   if (refs.clienteForm) initCollapseSections();
   if (refs.fvTableBody) safeRender(renderForcaVendas, "forcaVendas");
+  if (refs.fvCienciaTableBody) safeRender(renderFvCiencias, "fvCiencias");
   if (refs.homeTodayList) safeRender(renderHomeToday, "homeToday");
   if (refs.usuarioTableBody) safeRender(renderUsuarios, "usuarios");
+  if (refs.escalaTurnosGrid) safeRender(renderEscala, "escala");
+  if (refs.atuTableBody) safeRender(renderAtualizacoes, "atualizacoes");
+  if (refs.tdiLista) safeRender(renderTdis, "tdis");
 
   populateProcTipoSelect();
 }
@@ -727,15 +898,61 @@ async function loadData() {
 }
 
 function updateState(data) {
+  // Técnicos primeiro: o filtro de "só o que é meu" depende do cadastro deles.
+  state.tecnicos = Array.isArray(data.tecnicos) ? data.tecnicos : [];
   state.issues = Array.isArray(data.issues) ? data.issues : [];
-  state.spedCorrections = Array.isArray(data.spedCorrections) ? data.spedCorrections : [];
+  state.spedCorrections = registrosDoUsuario(Array.isArray(data.spedCorrections) ? data.spedCorrections : []);
   state.spedClients = Array.isArray(data.spedClients) ? data.spedClients : [];
-  state.procedimentos = Array.isArray(data.procedimentos) ? data.procedimentos : [];
+  state.procedimentos = registrosDoUsuario(Array.isArray(data.procedimentos) ? data.procedimentos : []);
   state.diario = Array.isArray(data.diario) ? data.diario : [];
   state.clientes = Array.isArray(data.clientes) ? data.clientes : [];
-  state.tecnicos = Array.isArray(data.tecnicos) ? data.tecnicos : [];
   state.tiposProcedimento = Array.isArray(data.tiposProcedimento) ? data.tiposProcedimento : [];
   state.implantacoes = Array.isArray(data.implantacoes) ? data.implantacoes : [];
+}
+
+// ── Registros atribuídos ao técnico (SPED, procedimentos, atualizações) ──────
+// Admin vê tudo; técnico só o que tem o nome dele em "tecnico"; consulta nada.
+// Quem garante é a RLS (tecnico_e_do_usuario em auth.sql); aqui a tela fica
+// coerente mesmo antes do script rodar.
+
+function usuarioVeTudo() {
+  return Boolean(window.auth && window.auth.can("admin"));
+}
+
+// Técnico do usuário logado — mesmo critério da RLS: cadastro de técnico com o
+// mesmo e-mail do perfil; senão, o nome do perfil.
+function tecnicoDoUsuario() {
+  const perfil = (window.auth && window.auth.perfil) || {};
+  const email = normalizeText(perfil.email || (window.auth && window.auth.user && window.auth.user.email));
+  const porEmail = email && (state.tecnicos || []).find((t) => t.nome && normalizeText(t.email) === email);
+  return porEmail ? porEmail.nome : (perfil.nome || "");
+}
+
+function registrosDoUsuario(items) {
+  if (!window.auth || usuarioVeTudo()) return items;
+  if (window.auth.papel !== "tecnico") return [];
+  const meu = normalizeText(tecnicoDoUsuario());
+  return meu ? items.filter((item) => normalizeText(item.tecnico) === meu) : [];
+}
+
+// No formulário, o técnico fica fixo no próprio nome (a RLS recusaria outro).
+// Retorna false se o usuário não-admin não estiver vinculado a um técnico.
+function fixarTecnicoDoUsuario(input) {
+  if (!input) return true;
+  if (usuarioVeTudo()) {
+    input.readOnly = false;
+    input.removeAttribute("title");
+    return true;
+  }
+  const meu = tecnicoDoUsuario();
+  input.value = meu;
+  input.readOnly = true;
+  input.title = "Você só registra itens atribuídos a você";
+  return Boolean(meu);
+}
+
+function avisarTecnicoNaoVinculado() {
+  alert("Seu usuário não está vinculado a um técnico. Peça ao administrador para cadastrar seu e-mail no técnico, em Setup.");
 }
 
 function refreshCurrentView() {
@@ -753,7 +970,11 @@ function refreshCurrentView() {
   if (refs.implForm) safeRender(renderImplantacao, "implantacao");
   if (refs.implAbertasList) safeRender(renderImplAbertas, "implAbertas");
   if (refs.fvTableBody) safeRender(renderForcaVendas, "forcaVendas");
+  if (refs.fvCienciaTableBody) safeRender(renderFvCiencias, "fvCiencias");
   if (refs.homeTodayList) safeRender(renderHomeToday, "homeToday");
+  if (refs.escalaTurnosGrid) safeRender(renderEscala, "escala");
+  if (refs.atuTableBody) safeRender(renderAtualizacoes, "atualizacoes");
+  if (refs.tdiLista) safeRender(renderTdis, "tdis");
   populateProcTipoSelect();
 }
 
@@ -778,6 +999,10 @@ async function deleteData(path) {
 
 function requiredPermission(path, method) {
   if (path === "/api/backup") return "admin";
+  // TDI: técnico cria; só o admin exclui (espelha supabase/tdis.sql).
+  if (method === "DELETE" && path.startsWith("/api/tdis/")) return "admin";
+  // Atualizações: só o admin cadastra/edita/exclui; o técnico só confirma.
+  if (/^\/api\/atualizacoes(-lote)?(\/|$)/.test(path)) return "admin";
   if (/^\/api\/(tecnicos|tipos-procedimento)(\/|$)/.test(path)) return "admin";
   if (method === "DELETE" && path.startsWith("/api/clientes/")) return "admin";
   if (method === "DELETE" && !/^\/api\/[^/]+\/./.test(path)) return "admin"; // "Limpar todos"
@@ -985,6 +1210,44 @@ async function supabaseRoute(path, method, payload) {
     return;
   }
 
+  if (method === "PUT" && path === "/api/escala-config") {
+    const { error } = await db.from("escala_config").upsert({
+      id: "principal",
+      turnos: payload.turnos,
+      equipes: payload.equipes,
+      semana_referencia: payload.semanaReferencia,
+      updated_at: new Date().toISOString(),
+    });
+    if (error) throw error;
+    return;
+  }
+
+  if (method === "POST" && path === "/api/escala-excecoes") {
+    const { error } = await db.from("escala_excecoes").insert({
+      id: payload.id,
+      tipo: payload.tipo,
+      data_inicio: payload.dataInicio,
+      data_fim: payload.dataFim,
+      tecnico: payload.tecnico || "",
+      turno_id: payload.turnoId || "",
+      motivo: payload.motivo || "",
+    });
+    if (error) throw error;
+    return;
+  }
+
+  if (method === "POST" && path === "/api/fv-ciencias") {
+    const { error } = await db.from("fv_ciencias").insert({
+      id: payload.id,
+      token: payload.token,
+      conteudo: payload.conteudo,
+      clientes: payload.clientes,
+      criado_por: payload.criadoPor || "",
+    });
+    if (error) throw error;
+    return;
+  }
+
   if (method === "PATCH" && path.startsWith("/api/clientes-fv/")) {
     const id = decodeURIComponent(path.split("/").pop());
     const { error } = await db.from("clientes").update({
@@ -1006,6 +1269,49 @@ async function supabaseRoute(path, method, payload) {
       versao_banco: payload.versaoBanco || "",
       updated_at: payload.updatedAt,
     }).eq("id", id);
+    if (error) throw error;
+    return;
+  }
+
+  if (method === "POST" && path === "/api/tdis") {
+    const { error } = await db.from("tdis").insert({
+      id: payload.id,
+      cliente: payload.cliente,
+      titulo: payload.titulo,
+      conteudo: payload.conteudo,
+      descricao: payload.descricao || "",
+      imagem: payload.imagem || "",
+      criado_por_nome: payload.criadoPorNome || "",
+    });
+    if (error) throw error;
+    return;
+  }
+
+  // Lote: várias atualizações (uma por cliente) num único INSERT.
+  if (method === "POST" && path === "/api/atualizacoes-lote") {
+    const linhas = (payload.itens || []).map((item) => ({ id: item.id, ...atuRowDoPayload(item) }));
+    if (!linhas.length) return;
+    const { error } = await db.from("atualizacoes").insert(linhas);
+    if (error) throw error;
+    return;
+  }
+
+  if ((method === "POST" && path === "/api/atualizacoes") || (method === "PUT" && path.startsWith("/api/atualizacoes/"))) {
+    const row = atuRowDoPayload(payload);
+    const { error } = method === "POST"
+      ? await db.from("atualizacoes").insert({ id: payload.id, ...row })
+      : await db.from("atualizacoes").update(row).eq("id", decodeURIComponent(path.split("/").pop()));
+    if (error) throw error;
+    return;
+  }
+
+  if (method === "PATCH" && path.startsWith("/api/atualizacoes-confirmar/")) {
+    const { error } = await db.from("atualizacoes").update({
+      realizada: true,
+      realizada_em: payload.realizadaEm || "",
+      confirmado_por: payload.confirmadoPor || "",
+      updated_at: new Date().toISOString(),
+    }).eq("id", decodeURIComponent(path.split("/").pop()));
     if (error) throw error;
     return;
   }
@@ -1109,7 +1415,52 @@ async function supabaseRoute(path, method, payload) {
   throw new Error("Rota nao encontrada: " + path);
 }
 
+// Linha de `atualizacoes` a partir do payload do formulário (unitário e lote).
+function atuRowDoPayload(payload) {
+  return {
+    tipo: payload.tipo,
+    cliente: payload.cliente,
+    tecnico: payload.tecnico || "",
+    data_prevista: payload.dataPrevista || "",
+    versao: payload.versao || "",
+    estacoes: payload.tipo === "estacao" ? payload.estacoes || "" : "",
+    observacao: payload.observacao || "",
+    realizada: payload.realizada === true,
+    realizada_em: payload.realizada ? payload.realizadaEm || "" : "",
+    confirmado_por: payload.realizada ? payload.confirmadoPor || "" : "",
+    updated_at: new Date().toISOString(),
+  };
+}
+
 async function supabaseDeleteRoute(path) {
+  if (path.startsWith("/api/tdis/")) {
+    const id = decodeURIComponent(path.split("/").pop());
+    const { error } = await db.from("tdis").delete().eq("id", id);
+    if (error) throw error;
+    return;
+  }
+
+  if (path.startsWith("/api/atualizacoes/")) {
+    const id = decodeURIComponent(path.split("/").pop());
+    const { error } = await db.from("atualizacoes").delete().eq("id", id);
+    if (error) throw error;
+    return;
+  }
+
+  if (path.startsWith("/api/escala-excecoes/")) {
+    const id = decodeURIComponent(path.split("/").pop());
+    const { error } = await db.from("escala_excecoes").delete().eq("id", id);
+    if (error) throw error;
+    return;
+  }
+
+  if (path.startsWith("/api/fv-ciencias/")) {
+    const id = decodeURIComponent(path.split("/").pop());
+    const { error } = await db.from("fv_ciencias").delete().eq("id", id);
+    if (error) throw error;
+    return;
+  }
+
   if (path === "/api/sped") {
     const { error } = await db.from("sped_corrections").delete().not("id", "is", null);
     if (error) throw error;
@@ -1298,6 +1649,7 @@ function readStoredArray(key) {
 }
 
 function exportBackup() {
+  if (!usuarioVeTudo() && !confirm("Este backup terá só os SPED e procedimentos que você consegue ver (os atribuídos a você). Não use para restaurar o sistema inteiro. Continuar?")) return;
   const backup = {
     schemaVersion: 1,
     app: "gestao-suporte",
@@ -1373,6 +1725,7 @@ function createId() {
 
 function focusSpedForm() {
   resetSpedForm();
+  if (!fixarTecnicoDoUsuario(refs.spedTecnico)) { avisarTecnicoNaoVinculado(); return; }
   openModal(refs.spedFormModal, refs.spedCliente);
 }
 
@@ -1561,6 +1914,7 @@ function editSpedCorrection(id) {
   refs.spedTipo.value = item.tipo || "";
   refs.spedStatus.value = item.status || "Pendente";
   refs.spedTecnico.value = item.tecnico || "";
+  fixarTecnicoDoUsuario(refs.spedTecnico);
   if (refs.spedTelefone) refs.spedTelefone.value = item.telefone || "";
   refs.spedDataAgendamento.value = storageToInputDate(getSpedDateValue(item, "dataAgendamento", "data_agendamento"));
   refs.spedHorarioAgendamento.value = getSpedDateValue(item, "horarioAgendamento", "horario_agendamento");
@@ -1663,6 +2017,7 @@ function focusProcForm() {
   resetProcForm();
   populateProcTipoSelect();
   onProcTipoChange();
+  if (!fixarTecnicoDoUsuario(refs.procTecnico)) { avisarTecnicoNaoVinculado(); return; }
   openModal(refs.procFormModal, refs.procCliente);
 }
 
@@ -1727,6 +2082,7 @@ function editProcedimento(id) {
   if (refs.procVersaoBanco) refs.procVersaoBanco.value = item.versaoBanco || "";
   refs.procStatus.value = item.status || "Em aberto";
   refs.procTecnico.value = item.tecnico || "";
+  fixarTecnicoDoUsuario(refs.procTecnico);
   if (refs.procTelefone) refs.procTelefone.value = item.telefone || "";
   refs.procDataAgendamento.value = storageToInputDate(item.dataAgendamento || "");
   refs.procHorario.value = item.horario || "";
@@ -1991,7 +2347,18 @@ function renderSpedCorrections() {
     return matchesClient && matchesText && matchesMonth && matchesTab;
   });
 
+  // Ordem: data de agendamento (mais próxima primeiro) e horário; sem agendamento
+  // vai para o fim. Empate: competência mais recente, depois cliente.
   filtered.sort((a, b) => {
+    const agendKey = (item) => {
+      const data = formatDate(getSpedDateValue(item, "dataAgendamento", "data_agendamento"));
+      if (!data || data.length !== 10) return "9999-99-99 99:99";
+      const [dd, mm, yyyy] = data.split("/");
+      const hora = getSpedDateValue(item, "horarioAgendamento", "horario_agendamento") || "99:99";
+      return `${yyyy}-${mm}-${dd} ${hora}`;
+    };
+    const byAgendamento = agendKey(a).localeCompare(agendKey(b));
+    if (byAgendamento) return byAgendamento;
     const toKey = (c) => {
       if (c && c.includes("/")) { const [mm, yyyy] = c.split("/"); return `${yyyy}-${mm}`; }
       return c || "";
@@ -2010,7 +2377,7 @@ function renderSpedCorrections() {
     if (tableWrap) tableWrap.style.display = "";
     if (refs.spedGroupedList) refs.spedGroupedList.style.display = "none";
     const thead = refs.spedTableBody ? refs.spedTableBody.closest("table").querySelector("thead") : null;
-    if (thead) thead.innerHTML = `<tr><th>Cliente</th><th>Competência</th><th>Tipo</th><th>Status</th><th>Técnico</th><th>Telefone</th><th>Data agendamento</th><th>Horario</th><th>Finalizado em</th><th>Observação</th><th>Ações</th></tr>`;
+    if (thead) thead.innerHTML = `<tr><th>Cliente</th><th>Competência</th><th>Tipo</th><th>Status</th><th>Técnico</th><th class="sped-col-extra">Telefone</th><th>Agendamento</th><th class="sped-col-extra">Horário</th><th>Finalizado em</th><th>Observação</th><th>Ações</th></tr>`;
     refs.spedTableBody.innerHTML = filtered.map(renderSpedTableRow).join("");
   }
 
@@ -2018,24 +2385,50 @@ function renderSpedCorrections() {
   renderSpedSummary(filtered);
 }
 
+// Linha de tabela do SPED com data-label em cada célula: em telas estreitas o
+// CSS (@container em .sped-card) transforma cada linha num card com rótulos.
+function spedLinhaTabela(labels, cells) {
+  return `<tr>${cells.map((cell, i) => {
+    const classes = [];
+    if (!String(cell).replace(/<[^>]*>/g, "").trim()) classes.push("sped-cell-vazia");
+    if (SPED_COLUNAS_EXTRAS.includes(labels[i])) classes.push("sped-col-extra");
+    return `<td data-label="${escapeAttribute(labels[i])}"${classes.length ? ` class="${classes.join(" ")}"` : ""}>${cell}</td>`;
+  }).join("")}</tr>`;
+}
+
+// Telefone e horário: colunas próprias nos cards; na tabela do desktop aparecem
+// como segunda linha do técnico e da data (.sped-sub) para a tabela caber.
+const SPED_COLUNAS_EXTRAS = ["Telefone", "Horário"];
+
+function spedComSub(principal, sub) {
+  return `${escapeHtml(principal)}${sub ? `<small class="sped-sub">${escapeHtml(sub)}</small>` : ""}`;
+}
+
+function spedObservacaoCell(texto) {
+  return texto ? `<span class="sped-obs" title="${escapeAttribute(texto)}">${escapeHtml(texto)}</span>` : "";
+}
+
+const SPED_LABELS_TABELA = ["Cliente", "Competência", "Tipo", "Status", "Técnico", "Telefone", "Data agendamento", "Horário", "Finalizado em", "Observação", "Ações"];
+const SPED_LABELS_AGRUPADO = ["Cliente", "Tipo", "Status", "Técnico", "Telefone", "Data agendamento", "Horário", "Finalizado em", "Quant. dias", "Observação", "Ações"];
+
 function renderSpedTableRow(item) {
   const cells = [
     `<strong class="client-name">${escapeHtml(item.cliente)}</strong>`,
     escapeHtml(formatCompetencia(item.competencia)),
     escapeHtml(item.tipo),
     `<span class="status ${getStatusClass(item.status)}">${escapeHtml(item.status)}</span>`,
-    escapeHtml(item.tecnico),
+    spedComSub(item.tecnico, item.telefone),
     escapeHtml(item.telefone || ""),
-    escapeHtml(formatDate(getSpedDateValue(item, "dataAgendamento", "data_agendamento"))),
+    spedComSub(formatDate(getSpedDateValue(item, "dataAgendamento", "data_agendamento")), getSpedDateValue(item, "horarioAgendamento", "horario_agendamento")),
     escapeHtml(getSpedDateValue(item, "horarioAgendamento", "horario_agendamento")),
     escapeHtml(formatDate(getSpedDateValue(item, "dataFinalizacao", "data_finalizacao"))),
-    escapeHtml(item.observacao),
+    spedObservacaoCell(item.observacao),
     `<div class="small-actions">
       <button type="button" onclick="editSpedCorrection('${escapeAttribute(item.id)}')">Editar</button>
       <button type="button" class="ghost" onclick="deleteSpedCorrection('${escapeAttribute(item.id)}')">Excluir</button>
     </div>`
   ];
-  return `<tr>${cells.map((cell) => `<td>${cell}</td>`).join("")}</tr>`;
+  return spedLinhaTabela(SPED_LABELS_TABELA, cells);
 }
 
 function renderSpedTableRowCorrigido(item) {
@@ -2215,11 +2608,11 @@ function renderSpedGrouped(items) {
         </div>
         <div class="sped-group-items" style="display:none">
           <div class="table-wrap">
-            <table>
+            <table class="sped-table">
               <thead>
                 <tr>
-                  <th>Cliente</th><th>Tipo</th><th>Status</th><th>Técnico</th><th>Telefone</th>
-                  <th>Data agendamento</th><th>Horário</th><th>Finalizado em</th><th style="text-align:right">Quant. Dias</th>
+                  <th>Cliente</th><th>Tipo</th><th>Status</th><th>Técnico</th><th class="sped-col-extra">Telefone</th>
+                  <th>Agendamento</th><th class="sped-col-extra">Horário</th><th>Finalizado em</th><th>Quant. dias</th>
                   <th>Observação</th><th>Ações</th>
                 </tr>
               </thead>
@@ -2242,19 +2635,19 @@ function renderSpedGroupedRow(item) {
     `<strong class="client-name">${escapeHtml(item.cliente)}</strong>`,
     escapeHtml(item.tipo),
     `<span class="status ${getStatusClass(item.status)}">${escapeHtml(item.status)}</span>`,
-    escapeHtml(item.tecnico),
+    spedComSub(item.tecnico, item.telefone),
     escapeHtml(item.telefone || ""),
-    escapeHtml(formatDate(agend)),
+    spedComSub(formatDate(agend), getSpedDateValue(item, "horarioAgendamento", "horario_agendamento")),
     escapeHtml(getSpedDateValue(item, "horarioAgendamento", "horario_agendamento")),
     escapeHtml(formatDate(final)),
-    `<span style="display:block;text-align:right">${dias !== "" ? escapeHtml(String(dias)) : "—"}</span>`,
-    escapeHtml(item.observacao || ""),
+    dias !== "" ? escapeHtml(String(dias)) : "—",
+    spedObservacaoCell(item.observacao || ""),
     `<div class="small-actions">
       <button type="button" onclick="editSpedCorrection('${escapeAttribute(item.id)}')">Editar</button>
       <button type="button" class="ghost" onclick="deleteSpedCorrection('${escapeAttribute(item.id)}')">Excluir</button>
     </div>`
   ];
-  return `<tr>${cells.map((cell) => `<td>${cell}</td>`).join("")}</tr>`;
+  return spedLinhaTabela(SPED_LABELS_AGRUPADO, cells);
 }
 
 function renderIssues() {
@@ -3260,7 +3653,2028 @@ function generateForcaVendasPdf(event) {
   window.print();
 }
 
+// ── Ciência do Financeiro (link público com retrato da Força de Vendas) ──────
+// O link aponta para ciencia-fv.html?token=..., que lê e confirma pelas funções
+// RPC de supabase/fv_ciencias.sql — a tabela segue fechada para a anon key.
+
+const FV_CIENCIA_CONTEUDO_LABELS = {
+  ambos: "VEM e ATS",
+  vem: "Somente VEM",
+  automacao: "Somente ATS",
+};
+
+function toFvCienciaJs(row) {
+  return {
+    id: row.id,
+    token: row.token,
+    conteudo: row.conteudo || "ambos",
+    clientes: Array.isArray(row.clientes) ? row.clientes : [],
+    criadoEm: row.criado_em,
+    criadoPor: row.criado_por || "",
+    confirmadoEm: row.confirmado_em || null,
+    confirmadoPor: row.confirmado_por || "",
+  };
+}
+
+async function loadFvCiencias() {
+  const { data, error } = await db.from("fv_ciencias").select("*").order("criado_em", { ascending: false });
+  // Tabela ainda não criada (supabase/fv_ciencias.sql): a página funciona sem o histórico.
+  state.fvCiencias = error ? [] : data.map(toFvCienciaJs);
+}
+
+// Mesmo critério de generateForcaVendasPdf: entra quem tem ao menos um dos produtos do conteúdo.
+function buildFvCienciaSnapshot(conteudo) {
+  const incluirVem = conteudo !== "automacao";
+  const incluirAutomacao = conteudo !== "vem";
+  return state.clientes
+    .filter((item) => (incluirVem && item.vem) || (incluirAutomacao && item.automacaoVendas))
+    .sort((a, b) => String(a.nome || "").localeCompare(String(b.nome || "")))
+    .map((item) => ({
+      nome: item.nome || "",
+      cpfCnpj: formatCpfCnpj(item.cpfCnpj) || "",
+      vem: incluirVem && item.vem ? item.vemLicencas || 0 : null,
+      automacao: incluirAutomacao && item.automacaoVendas ? item.automacaoVendasLicencas || 0 : null,
+    }));
+}
+
+// Campo a campo: o jsonb do banco não preserva a ordem das chaves, então JSON.stringify não serve.
+function fvCienciaSnapshotIgual(a, b) {
+  if (a.length !== b.length) return false;
+  return a.every((x, i) => {
+    const y = b[i] || {};
+    return x.nome === y.nome && x.cpfCnpj === y.cpfCnpj
+      && (x.vem ?? null) === (y.vem ?? null) && (x.automacao ?? null) === (y.automacao ?? null);
+  });
+}
+
+function fvCienciaTotais(clientes) {
+  return clientes.reduce((acc, c) => acc + (c.vem || 0) + (c.automacao || 0), 0);
+}
+
+function fvCienciaUrl(token) {
+  return new URL(`ciencia-fv.html?token=${encodeURIComponent(token)}`, window.location.href).href;
+}
+
+function createFvCienciaToken() {
+  const bytes = new Uint8Array(32);
+  window.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function formatFvCienciaDataHora(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return `${d.toLocaleDateString("pt-BR")} às ${d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+}
+
+function renderFvCiencias() {
+  if (!refs.fvCienciaTableBody) return;
+  const items = state.fvCiencias || [];
+  const podeEscrever = Boolean(window.auth && window.auth.can("write"));
+
+  refs.fvCienciaTableBody.innerHTML = items.map((item) => {
+    const qtdClientes = item.clientes.length;
+    const licencas = fvCienciaTotais(item.clientes);
+    // Retrato diferente da lista atual: avisa que vale gerar um link novo.
+    const desatualizado = !fvCienciaSnapshotIgual(buildFvCienciaSnapshot(item.conteudo), item.clientes);
+    // Ciência individual: a situação do link é a soma das confirmações de cada cliente.
+    const cientes = item.clientes.filter((c) => c.confirmadoEm).length;
+    const comObservacao = item.clientes.filter((c) => c.confirmadoEm && c.observacao).length;
+    const badge = cientes === qtdClientes
+      ? `<span class="status status-concluido">Ciente</span>`
+      : cientes
+        ? `<span class="status status-em-andamento">Parcial</span>`
+        : `<span class="status status-pendente">Aguardando</span>`;
+    const situacao = `${badge}<small>${cientes} de ${qtdClientes} ${qtdClientes === 1 ? "cliente" : "clientes"}</small>
+      ${comObservacao ? `<small class="fv-ciencia-alerta">${comObservacao} com observação</small>` : ""}`;
+    const id = escapeAttribute(item.id);
+    return `<tr>
+      <td>${escapeHtml(formatFvCienciaDataHora(item.criadoEm))}${item.criadoPor ? `<small>por ${escapeHtml(item.criadoPor)}</small>` : ""}</td>
+      <td>${escapeHtml(FV_CIENCIA_CONTEUDO_LABELS[item.conteudo] || item.conteudo)}</td>
+      <td>${qtdClientes} ${qtdClientes === 1 ? "cliente" : "clientes"} · ${licencas} ${licencas === 1 ? "licença" : "licenças"}
+        ${desatualizado ? `<small class="fv-ciencia-alerta">Dados alterados desde o envio</small>` : ""}</td>
+      <td>${situacao}</td>
+      <td>
+        <div class="small-actions">
+          <button type="button" onclick="verFvCienciaDetalhe('${id}')">Ver clientes</button>
+          <button type="button" class="ghost" onclick="copyFvCienciaLinkById('${id}', this)">Copiar link</button>
+          <a class="button-link" href="${escapeAttribute(fvCienciaUrl(item.token))}" target="_blank" rel="noopener">Abrir</a>
+          ${podeEscrever ? `<button type="button" class="danger" onclick="deleteFvCiencia('${id}')">Excluir</button>` : ""}
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+
+  if (refs.fvCienciaEmptyState) refs.fvCienciaEmptyState.style.display = items.length ? "none" : "block";
+}
+
+function verFvCienciaDetalhe(id) {
+  const item = (state.fvCiencias || []).find((c) => String(c.id) === String(id));
+  if (!item || !refs.fvCienciaDetalheModal) return;
+  const incluirVem = item.conteudo !== "automacao";
+  const incluirAutomacao = item.conteudo !== "vem";
+  const qtd = (valor) => (valor === null || valor === undefined ? "—" : valor);
+  const cientes = item.clientes.filter((c) => c.confirmadoEm).length;
+
+  refs.fvCienciaDetalheInfo.textContent =
+    `Link gerado em ${formatFvCienciaDataHora(item.criadoEm)} · ${cientes} de ${item.clientes.length} clientes cientes`;
+  refs.fvCienciaDetalheBody.innerHTML = `
+    <table class="fv-ciencia-detalhe">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          ${incluirVem ? `<th>VEM</th>` : ""}
+          ${incluirAutomacao ? `<th>ATS</th>` : ""}
+          <th>Ciência</th>
+          <th>Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${item.clientes.map((c) => `<tr>
+          <td><strong>${escapeHtml(c.nome)}</strong>${c.cpfCnpj ? `<small>${escapeHtml(c.cpfCnpj)}</small>` : ""}</td>
+          ${incluirVem ? `<td>${qtd(c.vem)}</td>` : ""}
+          ${incluirAutomacao ? `<td>${qtd(c.automacao)}</td>` : ""}
+          <td>${c.confirmadoEm
+            ? `<span class="status status-concluido">Ciente</span><small>${escapeHtml(c.confirmadoPor || "")} · ${escapeHtml(formatFvCienciaDataHora(c.confirmadoEm))}</small>`
+            : `<span class="status status-pendente">Aguardando</span>`}</td>
+          <td>${escapeHtml(c.observacao || "—")}</td>
+        </tr>`).join("")}
+      </tbody>
+    </table>`;
+  openModal(refs.fvCienciaDetalheModal);
+}
+
+function openFvCienciaModal() {
+  if (refs.fvCienciaForm) refs.fvCienciaForm.hidden = false;
+  if (refs.fvCienciaResultado) refs.fvCienciaResultado.hidden = true;
+  if (refs.fvCienciaConteudo) refs.fvCienciaConteudo.value = "ambos";
+  openModal(refs.fvCienciaModal, refs.fvCienciaConteudo);
+}
+
+async function saveFvCiencia(event) {
+  event.preventDefault();
+  const conteudo = refs.fvCienciaConteudo ? refs.fvCienciaConteudo.value : "ambos";
+  const clientes = buildFvCienciaSnapshot(conteudo);
+  if (!clientes.length) {
+    alert("Nenhum cliente com o produto escolhido. Não há o que enviar ao Financeiro.");
+    return;
+  }
+  const perfil = window.auth && window.auth.perfil;
+  const payload = {
+    id: createId(),
+    token: createFvCienciaToken(),
+    conteudo,
+    clientes,
+    criadoPor: (perfil && perfil.nome) || (window.auth && window.auth.user && window.auth.user.email) || "",
+  };
+  await sendData("/api/fv-ciencias", "POST", payload);
+  await loadFvCiencias();
+  renderFvCiencias();
+
+  refs.fvCienciaLink.value = fvCienciaUrl(payload.token);
+  refs.fvCienciaForm.hidden = true;
+  refs.fvCienciaResultado.hidden = false;
+  refs.fvCienciaLink.select();
+}
+
+async function copyFvCienciaLink(url, button) {
+  try {
+    await navigator.clipboard.writeText(url);
+  } catch (_) {
+    // Sem permissão de clipboard (ex.: arquivo aberto direto no browser): mostra para copiar à mão.
+    prompt("Copie o link:", url);
+    return;
+  }
+  if (button) {
+    const texto = button.textContent;
+    button.textContent = "Copiado!";
+    setTimeout(() => { button.textContent = texto; }, 1500);
+  }
+}
+
+function copyFvCienciaLinkById(id, button) {
+  const item = (state.fvCiencias || []).find((c) => String(c.id) === String(id));
+  if (item) copyFvCienciaLink(fvCienciaUrl(item.token), button);
+}
+
+async function deleteFvCiencia(id) {
+  if (!confirm("Excluir este link? Quem tiver o link não conseguirá mais abri-lo, e o registro de ciência será apagado.")) return;
+  await deleteData(`/api/fv-ciencias/${encodeURIComponent(id)}`);
+  await loadFvCiencias();
+  renderFvCiencias();
+}
+
+// ── Escala dos técnicos (escala.html) ───────────────────────────────────────
+// Revezamento semanal: cada equipe tem um horário-base e, a cada semana depois
+// da semana de referência, avança um horário (com dois horários, alterna).
+// Equipe "fixa" (ex.: Equipe C) fica sempre no seu horário, que sai do
+// revezamento; as demais giram só entre os horários restantes.
+// Horário efetivo de uma equipe que reveza numa semana =
+//   base + semanas desde a referência + inversões permanentes até a semana
+//   + 1 se a semana tiver inversão só dela   (módulo nº de horários rotativos)
+// Inversões e exceções por técnico ficam em escala_excecoes, então mudar o
+// revezamento "daqui pra frente" não reescreve as semanas passadas.
+
+const ESCALA_DIAS_SEMANA = ["Seg", "Ter", "Qua", "Qui", "Sex"];
+const ESCALA_SEMANA_MS = 7 * 24 * 60 * 60 * 1000;
+const ESCALA_SEMANAS_PROXIMAS = 8;
+
+function escalaConfigPadrao() {
+  return {
+    turnos: [
+      { id: "t1", nome: "Horário 1", periodos: [{ inicio: "08:00", fim: "11:00" }, { inicio: "13:00", fim: "18:00" }] },
+      { id: "t2", nome: "Horário 2", periodos: [{ inicio: "09:00", fim: "13:00" }, { inicio: "15:00", fim: "19:00" }] },
+      { id: "t3", nome: "Horário 3", periodos: [{ inicio: "08:00", fim: "12:00" }, { inicio: "14:00", fim: "18:00" }] },
+    ],
+    equipes: [
+      { id: "e1", nome: "Equipe A", turnoReferenciaId: "t1", tecnicos: [] },
+      { id: "e2", nome: "Equipe B", turnoReferenciaId: "t2", tecnicos: [] },
+      { id: "e3", nome: "Equipe C", turnoReferenciaId: "t3", fixo: true, tecnicos: [] },
+    ],
+    semanaReferencia: escalaFormatDate(escalaSegunda(escalaHoje())),
+    salvo: false,
+  };
+}
+
+// Datas sempre ao meio-dia local: somar dias nunca cai no dia errado por fuso/horário de verão.
+function escalaParseDate(stored) {
+  if (!stored || stored.length !== 10 || stored[2] !== "/" || stored[5] !== "/") return null;
+  const [d, m, y] = stored.split("/").map(Number);
+  if (!d || !m || !y) return null;
+  return new Date(y, m - 1, d, 12);
+}
+
+function escalaFormatDate(date) {
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  return `${dd}/${mm}/${date.getFullYear()}`;
+}
+
+function escalaFormatCurto(date) {
+  return escalaFormatDate(date).slice(0, 5);
+}
+
+function escalaHoje() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
+}
+
+function escalaSegunda(date) {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12);
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return d;
+}
+
+function escalaAddDias(date, dias) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + dias);
+  return d;
+}
+
+function escalaSemanasEntre(a, b) {
+  return Math.round((escalaSegunda(b) - escalaSegunda(a)) / ESCALA_SEMANA_MS);
+}
+
+function escalaMesmoDia(a, b) {
+  return a && b && escalaFormatDate(a) === escalaFormatDate(b);
+}
+
+function escalaHorasTexto(turno) {
+  return ((turno && turno.periodos) || [])
+    .filter((p) => p.inicio && p.fim)
+    .map((p) => `${p.inicio}–${p.fim}`)
+    .join(" · ");
+}
+
+function toEscalaExcecaoJs(row) {
+  return {
+    id: row.id,
+    tipo: row.tipo,
+    dataInicio: row.data_inicio || "",
+    dataFim: row.data_fim || row.data_inicio || "",
+    tecnico: row.tecnico || "",
+    turnoId: row.turno_id || "",
+    motivo: row.motivo || "",
+    createdAt: row.created_at,
+  };
+}
+
+async function loadEscala() {
+  const [cfgRes, excRes] = await Promise.all([
+    db.from("escala_config").select("*").eq("id", "principal").maybeSingle(),
+    db.from("escala_excecoes").select("*").order("created_at", { ascending: true }),
+  ]);
+  // Tabelas ainda não criadas (supabase/escala.sql): mostra o padrão e avisa.
+  state.escalaErro = Boolean(cfgRes.error || excRes.error);
+  const row = !cfgRes.error ? cfgRes.data : null;
+  const padrao = escalaConfigPadrao();
+  state.escala = row && Array.isArray(row.turnos) && row.turnos.length
+    ? {
+      turnos: row.turnos,
+      equipes: Array.isArray(row.equipes) ? row.equipes.map((eq) => ({
+        ...eq,
+        // Equipe C salva antes de existir a opção "fixa": ela é sempre fixa no Horário 3.
+        fixo: eq.fixo === undefined ? eq.id === "e3" : Boolean(eq.fixo),
+        tecnicos: Array.isArray(eq.tecnicos) ? eq.tecnicos : [],
+      })) : [],
+      ajustePendente: Array.isArray(row.equipes) && row.equipes.some((eq) => eq.id === "e3" && eq.fixo === undefined),
+      semanaReferencia: escalaParseDate(row.semana_referencia) ? row.semana_referencia : padrao.semanaReferencia,
+      salvo: true,
+    }
+    : padrao;
+  state.escalaExcecoes = excRes.error ? [] : excRes.data.map(toEscalaExcecaoJs);
+  if (!state.escalaSemana) state.escalaSemana = escalaSegunda(escalaHoje());
+}
+
+function escalaInversoesPermanentesAte(segunda) {
+  return state.escalaExcecoes.filter((e) => {
+    const d = e.tipo === "inverter_daqui" && escalaParseDate(e.dataInicio);
+    return d && d <= segunda;
+  }).length;
+}
+
+function escalaInversaoDaSemana(segunda, tipo = "inverter") {
+  const chave = escalaFormatDate(segunda);
+  return state.escalaExcecoes.find((e) => e.tipo === tipo && e.dataInicio === chave) || null;
+}
+
+function escalaMod(valor, n) {
+  return ((valor % n) + n) % n;
+}
+
+// Índices dos horários que entram no revezamento: todos, menos os que são de
+// uma equipe fixa (ex.: Equipe C sempre no Horário 3).
+function escalaTurnosRotativos(cfg) {
+  const fixos = new Set(cfg.equipes.filter((eq) => eq.fixo).map((eq) => eq.turnoReferenciaId));
+  return cfg.turnos.map((t, i) => i).filter((i) => !fixos.has(cfg.turnos[i].id));
+}
+
+// Horário (índice em cfg.turnos) da equipe após `deslocamento` passos de revezamento.
+// Equipe fixa fica sempre no seu horário; as demais giram só entre os rotativos.
+function escalaIndiceNaConfig(cfg, equipe, deslocamento) {
+  const idx = cfg.turnos.findIndex((t) => t.id === equipe.turnoReferenciaId);
+  if (equipe.fixo) return idx;
+  const rot = escalaTurnosRotativos(cfg);
+  if (!rot.length) return -1;
+  let pos = rot.indexOf(idx);
+  if (pos < 0) pos = Math.max(0, cfg.equipes.filter((eq) => !eq.fixo).indexOf(equipe));
+  return rot[escalaMod(pos + deslocamento, rot.length)];
+}
+
+function escalaDeslocamento(segunda, incluirInversaoDaSemana = true) {
+  const ref = escalaParseDate(state.escala.semanaReferencia) || segunda;
+  return escalaSemanasEntre(ref, segunda)
+    + escalaInversoesPermanentesAte(segunda)
+    + (incluirInversaoDaSemana && escalaInversaoDaSemana(segunda) ? 1 : 0);
+}
+
+function escalaIndiceTurnoEquipe(equipe, segunda) {
+  if (!state.escala.turnos.length) return -1;
+  return escalaIndiceNaConfig(state.escala, equipe, escalaDeslocamento(segunda));
+}
+
+function escalaEquipeDoTecnico(nome) {
+  const alvo = normalizeText(nome);
+  return state.escala.equipes.find((eq) => eq.tecnicos.some((t) => normalizeText(t) === alvo)) || null;
+}
+
+// Exceção de técnico que vale no dia; se houver mais de uma, vale a mais recente.
+function escalaExcecaoTecnicoNoDia(nome, dia) {
+  const alvo = normalizeText(nome);
+  let achada = null;
+  state.escalaExcecoes.forEach((e) => {
+    if (e.tipo !== "tecnico" || normalizeText(e.tecnico) !== alvo) return;
+    const ini = escalaParseDate(e.dataInicio);
+    const fim = escalaParseDate(e.dataFim) || ini;
+    if (ini && dia >= ini && dia <= fim) achada = e;
+  });
+  return achada;
+}
+
+// Onde o técnico está num dia: { turno (null = folga/ausente ou sem equipe), indice, excecao, equipe }
+function escalaTecnicoNoDia(nome, dia) {
+  const { turnos } = state.escala;
+  const equipe = escalaEquipeDoTecnico(nome);
+  const excecao = escalaExcecaoTecnicoNoDia(nome, dia);
+  if (excecao) {
+    const indice = turnos.findIndex((t) => t.id === excecao.turnoId);
+    return { turno: turnos[indice] || null, indice, excecao, equipe };
+  }
+  if (!equipe) return { turno: null, indice: -1, excecao: null, equipe: null };
+  const indice = escalaIndiceTurnoEquipe(equipe, escalaSegunda(dia));
+  return { turno: turnos[indice] || null, indice, excecao: null, equipe };
+}
+
+function escalaNomesOrdenados(nomes) {
+  return nomes.slice().sort((a, b) => String(a).localeCompare(String(b), "pt-BR"));
+}
+
+// Técnicos que aparecem na semana: os das equipes (na ordem das equipes) e
+// quem não tem equipe mas tem exceção caindo nesses dias.
+function escalaTecnicosDaSemana(segunda) {
+  const lista = [];
+  const vistos = new Set();
+  const incluir = (nome) => {
+    const chave = normalizeText(nome);
+    if (!chave || vistos.has(chave)) return;
+    vistos.add(chave);
+    lista.push(nome);
+  };
+  state.escala.equipes.forEach((eq) => escalaNomesOrdenados(eq.tecnicos).forEach(incluir));
+  const sexta = escalaAddDias(segunda, ESCALA_DIAS_SEMANA.length - 1);
+  state.escalaExcecoes.forEach((e) => {
+    if (e.tipo !== "tecnico") return;
+    const ini = escalaParseDate(e.dataInicio);
+    const fim = escalaParseDate(e.dataFim) || ini;
+    if (ini && ini <= sexta && fim >= segunda) incluir(e.tecnico);
+  });
+  return lista;
+}
+
+function escalaDiasDaSemana(segunda) {
+  return ESCALA_DIAS_SEMANA.map((rotulo, i) => ({ rotulo, data: escalaAddDias(segunda, i) }));
+}
+
+function escalaChip(turno, indice) {
+  return turno
+    ? `<span class="escala-chip escala-chip--${escalaMod(indice, 4)}">${escapeHtml(turno.nome)}</span>`
+    : `<span class="escala-chip escala-chip--folga">Folga / ausente</span>`;
+}
+
+function escalaPodeEscrever() {
+  return Boolean(window.auth && window.auth.can("write"));
+}
+
+function renderEscala() {
+  if (!refs.escalaTurnosGrid || !state.escala) return;
+  renderEscalaSemana();
+  renderEscalaProximas();
+  renderEscalaExcecoes();
+  renderEscalaConfigResumo();
+}
+
+function renderEscalaSemana() {
+  const segunda = state.escalaSemana;
+  const dias = escalaDiasDaSemana(segunda);
+  const sexta = dias[dias.length - 1].data;
+  const hoje = escalaHoje();
+  const { turnos, equipes } = state.escala;
+  const ehEstaSemana = escalaMesmoDia(segunda, escalaSegunda(hoje));
+
+  refs.escalaWeekLabel.textContent = `${escalaFormatCurto(segunda)} a ${escalaFormatDate(sexta)}${ehEstaSemana ? " · esta semana" : ""}`;
+
+  const avisos = [];
+  if (state.escalaErro) {
+    avisos.push("Não foi possível carregar a escala do banco. Rode supabase/escala.sql no SQL Editor do Supabase.");
+  } else if (!state.escala.salvo) {
+    avisos.push("Escala ainda não configurada: mostrando os horários padrão. Use \"Configurar escala\" para montar as equipes.");
+  }
+  const inversaoSemana = escalaInversaoDaSemana(segunda);
+  const inversaoDaqui = escalaInversaoDaSemana(segunda, "inverter_daqui");
+  if (inversaoSemana) avisos.push("Equipes invertidas só nesta semana.");
+  if (inversaoDaqui) avisos.push("O revezamento foi invertido a partir desta semana.");
+  refs.escalaWeekInfo.textContent = avisos.join(" ");
+  refs.escalaWeekInfo.hidden = !avisos.length;
+
+  if (refs.escalaInverterSemanaBtn) {
+    refs.escalaInverterSemanaBtn.textContent = inversaoSemana ? "Desfazer inversão da semana" : "Inverter só esta semana";
+  }
+  if (refs.escalaInverterDaquiBtn) {
+    refs.escalaInverterDaquiBtn.textContent = inversaoDaqui ? "Desfazer inversão a partir desta semana" : "Inverter a partir desta semana";
+  }
+
+  const tecnicos = escalaTecnicosDaSemana(segunda);
+  // Grade técnico × dia, calculada uma vez e usada nos cards.
+  const grade = tecnicos.map((nome) => ({
+    nome,
+    equipe: escalaEquipeDoTecnico(nome),
+    dias: dias.map((d) => escalaTecnicoNoDia(nome, d.data)),
+  }));
+
+  // Cards por horário: equipe da semana, seus técnicos e quem entra/sai por exceção.
+  refs.escalaTurnosGrid.innerHTML = turnos.map((turno, i) => {
+    const equipesNoTurno = equipes.filter((eq) => escalaIndiceTurnoEquipe(eq, segunda) === i);
+    const itens = [];
+    grade.forEach((linha) => {
+      const regular = linha.equipe && escalaIndiceTurnoEquipe(linha.equipe, segunda) === i;
+      const diasFora = linha.dias.map((d, j) => ({ d, j })).filter(({ d }) => d.indice !== i);
+      const diasDentro = linha.dias.map((d, j) => ({ d, j })).filter(({ d }) => d.indice === i);
+      if (regular) {
+        const notas = diasFora.map(({ d, j }) => `${dias[j].rotulo} ${escalaFormatCurto(dias[j].data)}: ${d.turno ? d.turno.nome : "folga/ausente"}`);
+        itens.push(`<li>${escapeHtml(linha.nome)}${notas.length ? `<small class="escala-nota">${escapeHtml(notas.join(" · "))}</small>` : ""}</li>`);
+      } else if (diasDentro.length) {
+        const quando = diasDentro.length === dias.length ? "a semana toda" : diasDentro.map(({ j }) => `${dias[j].rotulo} ${escalaFormatCurto(dias[j].data)}`).join(", ");
+        itens.push(`<li class="escala-extra">+ ${escapeHtml(linha.nome)}<small class="escala-nota">${escapeHtml(quando)}</small></li>`);
+      }
+    });
+    return `<article class="escala-turno escala-turno--${escalaMod(i, 4)}">
+      <div class="escala-turno-head">
+        <h3>${escapeHtml(turno.nome)}</h3>
+        <span class="escala-horas">${escapeHtml(escalaHorasTexto(turno))}</span>
+      </div>
+      <p class="escala-turno-equipe">${equipesNoTurno.length ? escapeHtml(equipesNoTurno.map((eq) => eq.nome).join(", ")) : "Nenhuma equipe"}</p>
+      ${itens.length ? `<ul class="escala-turno-lista">${itens.join("")}</ul>` : `<p class="escala-vazio">Nenhum técnico.</p>`}
+    </article>`;
+  }).join("");
+}
+
+function renderEscalaProximas() {
+  if (!refs.escalaProximasTable) return;
+  const { turnos, equipes } = state.escala;
+  const inicio = escalaSegunda(escalaHoje());
+  const semanas = Array.from({ length: ESCALA_SEMANAS_PROXIMAS }, (_, i) => escalaAddDias(inicio, i * 7));
+  refs.escalaProximasTable.innerHTML = `
+    <thead>
+      <tr>
+        <th>Semana</th>
+        ${equipes.map((eq) => `<th>${escapeHtml(eq.nome)}</th>`).join("")}
+      </tr>
+    </thead>
+    <tbody>
+      ${semanas.map((segunda) => {
+        const invertida = escalaInversaoDaSemana(segunda);
+        const selecionada = escalaMesmoDia(segunda, state.escalaSemana);
+        return `<tr class="escala-clicavel${selecionada ? " escala-row-atual" : ""}" data-escala-semana="${escalaFormatDate(segunda)}" title="Ver esta semana">
+          <td><strong>${escalaFormatCurto(segunda)} a ${escalaFormatCurto(escalaAddDias(segunda, ESCALA_DIAS_SEMANA.length - 1))}</strong>
+            ${invertida ? `<small class="escala-nota">Invertida só nesta semana</small>` : ""}</td>
+          ${equipes.map((eq) => {
+            const i = escalaIndiceTurnoEquipe(eq, segunda);
+            return `<td>${escalaChip(turnos[i], i)}<small>${escapeHtml(escalaHorasTexto(turnos[i]))}</small></td>`;
+          }).join("")}
+        </tr>`;
+      }).join("")}
+    </tbody>`;
+}
+
+function escalaPeriodoTexto(e) {
+  if (e.tipo === "inverter") return `Semana de ${e.dataInicio}`;
+  if (e.tipo === "inverter_daqui") return `A partir de ${e.dataInicio}`;
+  return e.dataFim && e.dataFim !== e.dataInicio ? `${e.dataInicio} a ${e.dataFim}` : e.dataInicio;
+}
+
+const ESCALA_TIPO_LABELS = {
+  inverter: "Inversão só da semana",
+  inverter_daqui: "Inversão daqui em diante",
+  tecnico: "Técnico",
+};
+
+function renderEscalaExcecoes() {
+  if (!refs.escalaExcecoesBody) return;
+  const hoje = escalaHoje();
+  const segundaAtual = escalaSegunda(hoje);
+  const mostrarPassadas = refs.escalaMostrarPassadas && refs.escalaMostrarPassadas.checked;
+  const podeEscrever = escalaPodeEscrever();
+  const items = state.escalaExcecoes
+    .filter((e) => {
+      if (mostrarPassadas || e.tipo === "inverter_daqui") return true;
+      const fim = escalaParseDate(e.dataFim) || escalaParseDate(e.dataInicio);
+      if (!fim) return true;
+      return e.tipo === "inverter" ? fim >= segundaAtual : fim >= hoje;
+    })
+    .sort((a, b) => (escalaParseDate(a.dataInicio) || 0) - (escalaParseDate(b.dataInicio) || 0));
+
+  refs.escalaExcecoesBody.innerHTML = items.map((e) => {
+    const indice = state.escala.turnos.findIndex((t) => t.id === e.turnoId);
+    const turno = state.escala.turnos[indice];
+    return `<tr>
+      <td>${escapeHtml(escalaPeriodoTexto(e))}</td>
+      <td>${escapeHtml(ESCALA_TIPO_LABELS[e.tipo] || e.tipo)}</td>
+      <td>${e.tipo === "tecnico" ? escapeHtml(e.tecnico) : "Todas as equipes"}</td>
+      <td>${e.tipo === "tecnico" ? `${escalaChip(turno, indice)}${turno ? `<small>${escapeHtml(escalaHorasTexto(turno))}</small>` : ""}` : "—"}</td>
+      <td>${escapeHtml(e.motivo || "—")}</td>
+      <td>${podeEscrever ? `<button type="button" class="danger" onclick="deleteEscalaExcecao('${escapeAttribute(e.id)}')">Excluir</button>` : ""}</td>
+    </tr>`;
+  }).join("");
+  if (refs.escalaExcecoesEmpty) {
+    refs.escalaExcecoesEmpty.style.display = items.length ? "none" : "block";
+    refs.escalaExcecoesEmpty.textContent = state.escalaExcecoes.length && !items.length
+      ? "Nenhuma exceção a partir de hoje."
+      : "Nenhuma exceção cadastrada.";
+  }
+}
+
+function renderEscalaConfigResumo() {
+  if (!refs.escalaConfigResumo) return;
+  const { turnos, equipes } = state.escala;
+  const segundaAtual = escalaSegunda(escalaHoje());
+  refs.escalaConfigResumo.innerHTML = `
+    <div class="escala-resumo-bloco">
+      <p class="form-section-title">Horários</p>
+      ${turnos.map((t, i) => `<p>${escalaChip(t, i)} <span>${escapeHtml(escalaHorasTexto(t))}</span></p>`).join("")}
+    </div>
+    <div class="escala-resumo-bloco">
+      <p class="form-section-title">Equipes</p>
+      ${equipes.map((eq) => {
+        const i = escalaIndiceTurnoEquipe(eq, segundaAtual);
+        return `<p><strong>${escapeHtml(eq.nome)}</strong> — esta semana no ${escapeHtml(turnos[i] ? turnos[i].nome : "—")}
+          <small>${eq.tecnicos.length ? escapeHtml(escalaNomesOrdenados(eq.tecnicos).join(", ")) : "Nenhum técnico"}</small></p>`;
+      }).join("")}
+    </div>`;
+}
+
+function moveEscalaSemana(delta) {
+  state.escalaSemana = delta === 0
+    ? escalaSegunda(escalaHoje())
+    : escalaAddDias(state.escalaSemana, delta * 7);
+  renderEscala();
+}
+
+function onEscalaProximasClick(event) {
+  const row = event.target.closest("tr[data-escala-semana]");
+  const segunda = row && escalaParseDate(row.getAttribute("data-escala-semana"));
+  if (!segunda) return;
+  state.escalaSemana = segunda;
+  renderEscala();
+  if (refs.escalaWeekLabel) refs.escalaWeekLabel.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+async function reloadEscala() {
+  await loadEscala();
+  renderEscala();
+}
+
+// Enquanto a configuração não foi salva, a semana de referência padrão é "esta
+// semana" e andaria junto com o calendário: grava antes de registrar inversões.
+async function escalaGarantirConfigSalva() {
+  if (state.escala.salvo) return;
+  const { turnos, equipes, semanaReferencia } = state.escala;
+  await sendData("/api/escala-config", "PUT", { turnos, equipes, semanaReferencia });
+}
+
+async function toggleEscalaInversaoSemana() {
+  const segunda = state.escalaSemana;
+  const existente = escalaInversaoDaSemana(segunda);
+  if (existente) {
+    if (!confirm(`Desfazer a inversão da semana de ${escalaFormatDate(segunda)}?`)) return;
+    await deleteData(`/api/escala-excecoes/${encodeURIComponent(existente.id)}`);
+  } else {
+    if (!confirm(`Inverter as equipes só na semana de ${escalaFormatDate(segunda)}? As outras semanas continuam como estão.`)) return;
+    await escalaGarantirConfigSalva();
+    const data = escalaFormatDate(segunda);
+    await sendData("/api/escala-excecoes", "POST", { id: createId(), tipo: "inverter", dataInicio: data, dataFim: data });
+  }
+  await reloadEscala();
+}
+
+async function inverterEscalaDaqui() {
+  const segunda = state.escalaSemana;
+  const data = escalaFormatDate(segunda);
+  const existente = escalaInversaoDaSemana(segunda, "inverter_daqui");
+  if (existente) {
+    if (!confirm(`Desfazer a inversão feita a partir da semana de ${data}? As semanas seguintes voltam ao revezamento anterior.`)) return;
+    await deleteData(`/api/escala-excecoes/${encodeURIComponent(existente.id)}`);
+    await reloadEscala();
+    return;
+  }
+  const soDaSemana = escalaInversaoDaSemana(segunda);
+  const msg = `As equipes trocam de horário a partir da semana de ${data} e o revezamento continua daí em diante. As semanas anteriores não mudam.`
+    + (soDaSemana ? "\n\nEsta semana já tinha uma inversão só dela, que será removida." : "")
+    + "\n\nConfirmar?";
+  if (!confirm(msg)) return;
+  await escalaGarantirConfigSalva();
+  if (soDaSemana) await deleteData(`/api/escala-excecoes/${encodeURIComponent(soDaSemana.id)}`);
+  await sendData("/api/escala-excecoes", "POST", { id: createId(), tipo: "inverter_daqui", dataInicio: data, dataFim: data });
+  await reloadEscala();
+}
+
+function escalaTodosTecnicos() {
+  const nomes = new Map();
+  (state.tecnicos || []).forEach((t) => { if (t.nome) nomes.set(normalizeText(t.nome), t.nome); });
+  state.escala.equipes.forEach((eq) => eq.tecnicos.forEach((nome) => {
+    if (!nomes.has(normalizeText(nome))) nomes.set(normalizeText(nome), nome);
+  }));
+  return escalaNomesOrdenados([...nomes.values()]);
+}
+
+// Configuração salva antes de existir um horário/equipe do padrão (ex.: o
+// Horário 3 / Equipe C): acrescenta o que falta, para aparecer no modal.
+function escalaConfigComPadroes(cfg) {
+  const padrao = escalaConfigPadrao();
+  const turnos = cfg.turnos.slice();
+  const equipes = cfg.equipes.slice();
+  let adicionados = false;
+  padrao.turnos.forEach((t) => {
+    if (!turnos.some((x) => x.id === t.id)) { turnos.push(t); adicionados = true; }
+  });
+  padrao.equipes.forEach((eq) => {
+    if (!equipes.some((x) => x.id === eq.id)) { equipes.push(eq); adicionados = true; }
+  });
+  return { turnos, equipes, adicionados };
+}
+
+function openEscalaConfigModal() {
+  const rascunho = escalaConfigComPadroes(state.escala);
+  state.escalaRascunho = rascunho;
+  const { turnos, equipes } = rascunho;
+  const segundaAtual = escalaSegunda(escalaHoje());
+  // Com horário/equipe novos, o revezamento muda de tamanho: usa esta semana como
+  // referência e mantém nela o horário atual das equipes que já existiam.
+  const ajustarAoAtual = (rascunho.adicionados || state.escala.ajustePendente) && state.escala.salvo;
+  const ref = ajustarAoAtual
+    ? segundaAtual
+    : escalaParseDate(state.escala.semanaReferencia) || segundaAtual;
+  const permAteRef = escalaInversoesPermanentesAte(ref);
+
+  refs.escalaConfigTurnos.innerHTML = turnos.map((t, i) => {
+    const p = t.periodos || [];
+    const campo = (nome, valor, rotulo, tipo = "time") => `
+      <div>
+        <label for="escalaTurno${i}${nome}">${rotulo}</label>
+        <input id="escalaTurno${i}${nome}" type="${tipo}" data-turno="${i}" data-campo="${nome}" value="${escapeAttribute(valor || "")}" />
+      </div>`;
+    return `<div class="escala-turno-fields">
+      ${campo("nome", t.nome, "Nome", "text")}
+      ${campo("inicio1", p[0] && p[0].inicio, "Entrada")}
+      ${campo("fim1", p[0] && p[0].fim, "Saída (intervalo)")}
+      ${campo("inicio2", p[1] && p[1].inicio, "Retorno")}
+      ${campo("fim2", p[1] && p[1].fim, "Saída")}
+    </div>`;
+  }).join("");
+
+  refs.escalaSemanaReferencia.value = storageToInputDate(escalaFormatDate(ref));
+
+  refs.escalaConfigEquipes.innerHTML = equipes.map((eq, i) => {
+    // Mostra o horário efetivo da equipe na semana de referência (sem inversão só da semana).
+    const existente = state.escala.equipes.includes(eq);
+    const efetivo = existente && ajustarAoAtual
+      ? escalaIndiceNaConfig(state.escala, eq, escalaDeslocamento(segundaAtual, false))
+      : escalaIndiceNaConfig(rascunho, eq, permAteRef);
+    return `<div class="escala-equipe-fields">
+      <div>
+        <label for="escalaEquipe${i}Nome">Nome da equipe</label>
+        <input id="escalaEquipe${i}Nome" data-equipe="${i}" data-campo="nome" value="${escapeAttribute(eq.nome)}" />
+      </div>
+      <div>
+        <label for="escalaEquipe${i}Turno">Horário (na semana de referência)</label>
+        <select id="escalaEquipe${i}Turno" data-equipe="${i}" data-campo="turno">
+          ${turnos.map((t, j) => `<option value="${j}"${j === efetivo ? " selected" : ""}>${escapeHtml(t.nome)} (${escapeHtml(escalaHorasTexto(t))})</option>`).join("")}
+        </select>
+      </div>
+      <div>
+        <label for="escalaEquipe${i}Fixo">Revezamento</label>
+        <select id="escalaEquipe${i}Fixo" data-equipe="${i}" data-campo="fixo">
+          <option value="reveza"${eq.fixo ? "" : " selected"}>Reveza toda semana</option>
+          <option value="fixo"${eq.fixo ? " selected" : ""}>Fixa neste horário</option>
+        </select>
+      </div>
+    </div>`;
+  }).join("");
+
+  const tecnicos = escalaTodosTecnicos();
+  refs.escalaConfigTecnicos.innerHTML = tecnicos.length
+    ? tecnicos.map((nome, i) => {
+      const equipe = escalaEquipeDoTecnico(nome);
+      const atual = equipe ? equipes.indexOf(equipe) : -1;
+      return `<div class="escala-tecnico-row">
+        <label for="escalaTecnico${i}">${escapeHtml(nome)}</label>
+        <select id="escalaTecnico${i}" data-tecnico-nome="${escapeAttribute(nome)}">
+          <option value="">Sem equipe</option>
+          ${equipes.map((eq, j) => `<option value="${j}"${j === atual ? " selected" : ""}>${escapeHtml(eq.nome)}</option>`).join("")}
+        </select>
+      </div>`;
+    }).join("")
+    : `<p class="helper-text">Nenhum técnico cadastrado. Cadastre os técnicos em Setup.</p>`;
+
+  openModal(refs.escalaConfigModal);
+}
+
+async function saveEscalaConfig(event) {
+  event.preventDefault();
+  const form = refs.escalaConfigForm;
+  const cfg = state.escalaRascunho || state.escala;
+  const valor = (seletor) => {
+    const el = form.querySelector(seletor);
+    return el ? el.value.trim() : "";
+  };
+
+  const turnos = [];
+  for (let i = 0; i < cfg.turnos.length; i++) {
+    const t = cfg.turnos[i];
+    const get = (campo) => valor(`[data-turno="${i}"][data-campo="${campo}"]`);
+    const nome = get("nome") || t.nome;
+    const periodos = [];
+    for (const [ini, fim] of [["inicio1", "fim1"], ["inicio2", "fim2"]]) {
+      const inicio = get(ini);
+      const final = get(fim);
+      if (!inicio && !final) continue;
+      if (!inicio || !final || final <= inicio) {
+        alert(`Confira os horários de "${nome}": cada período precisa de início e fim, e o fim deve ser depois do início.`);
+        return;
+      }
+      periodos.push({ inicio, fim: final });
+    }
+    if (!periodos.length) {
+      alert(`Informe ao menos um período para "${nome}".`);
+      return;
+    }
+    if (periodos.length === 2 && periodos[1].inicio < periodos[0].fim) {
+      alert(`Em "${nome}", o retorno precisa ser depois da saída para o intervalo.`);
+      return;
+    }
+    turnos.push({ id: t.id, nome, periodos });
+  }
+
+  const refData = escalaParseDate(toStorageDate(refs.escalaSemanaReferencia.value));
+  if (!refData) {
+    alert("Informe a semana de referência.");
+    return;
+  }
+  const ref = escalaSegunda(refData);
+  const permAteRef = escalaInversoesPermanentesAte(ref);
+  const n = turnos.length;
+
+  const escolhidos = cfg.equipes.map((_, i) => parseInt(valor(`[data-equipe="${i}"][data-campo="turno"]`), 10) || 0);
+  const fixos = cfg.equipes.map((_, i) => valor(`[data-equipe="${i}"][data-campo="fixo"]`) === "fixo");
+  const nomesEquipes = cfg.equipes.map((eq, i) => valor(`[data-equipe="${i}"][data-campo="nome"]`) || eq.nome);
+  if (cfg.equipes.length <= n && new Set(escolhidos).size !== escolhidos.length) {
+    alert("Cada equipe precisa estar em um horário diferente na semana de referência.");
+    return;
+  }
+
+  // Horários do revezamento = os que não são de equipe fixa.
+  const turnosFixos = new Set(escolhidos.filter((_, i) => fixos[i]));
+  const rot = turnos.map((_, j) => j).filter((j) => !turnosFixos.has(j));
+  for (let i = 0; i < cfg.equipes.length; i++) {
+    if (fixos[i] || rot.includes(escolhidos[i])) continue;
+    alert(`"${nomesEquipes[i]}" reveza, mas o horário escolhido é fixo de outra equipe.`);
+    return;
+  }
+
+  const equipes = cfg.equipes.map((eq, i) => ({
+    id: eq.id,
+    nome: nomesEquipes[i],
+    fixo: fixos[i],
+    // Grava o horário-base já descontando as inversões permanentes até a referência,
+    // para que a semana de referência fique exatamente como foi escolhida.
+    turnoReferenciaId: fixos[i]
+      ? turnos[escolhidos[i]].id
+      : turnos[rot[escalaMod(rot.indexOf(escolhidos[i]) - permAteRef, rot.length)]].id,
+    tecnicos: [],
+  }));
+  form.querySelectorAll("[data-tecnico-nome]").forEach((select) => {
+    if (select.value === "") return;
+    const equipe = equipes[parseInt(select.value, 10)];
+    if (equipe) equipe.tecnicos.push(select.getAttribute("data-tecnico-nome"));
+  });
+
+  await sendData("/api/escala-config", "PUT", { turnos, equipes, semanaReferencia: escalaFormatDate(ref) });
+  closeModal(refs.escalaConfigModal);
+  await reloadEscala();
+}
+
+function openEscalaExcecaoModal(tecnico, diaStorage) {
+  const { turnos } = state.escala;
+  const tecnicos = escalaTodosTecnicos();
+  if (!tecnicos.length) {
+    alert("Nenhum técnico cadastrado. Cadastre os técnicos em Setup.");
+    return;
+  }
+  refs.escalaExcecaoTecnico.innerHTML = tecnicos
+    .map((nome) => `<option value="${escapeAttribute(nome)}"${tecnico && normalizeText(nome) === normalizeText(tecnico) ? " selected" : ""}>${escapeHtml(nome)}</option>`)
+    .join("");
+  refs.escalaExcecaoTurno.innerHTML = turnos
+    .map((t) => `<option value="${escapeAttribute(t.id)}">${escapeHtml(t.nome)} (${escapeHtml(escalaHorasTexto(t))})</option>`)
+    .join("") + `<option value="">Folga / ausente</option>`;
+
+  const hoje = escalaHoje();
+  const segunda = state.escalaSemana;
+  const padraoDia = escalaParseDate(diaStorage)
+    || (escalaMesmoDia(escalaSegunda(hoje), segunda) ? hoje : segunda);
+  refs.escalaExcecaoInicio.value = storageToInputDate(escalaFormatDate(padraoDia));
+  refs.escalaExcecaoFim.value = refs.escalaExcecaoInicio.value;
+  refs.escalaExcecaoMotivo.value = "";
+
+  // Sugere o horário "do outro lado": o primeiro diferente do que o técnico teria no dia.
+  const atual = escalaTecnicoNoDia(refs.escalaExcecaoTecnico.value, padraoDia);
+  const sugestao = turnos.find((t) => !atual.turno || t.id !== atual.turno.id);
+  refs.escalaExcecaoTurno.value = sugestao ? sugestao.id : "";
+
+  openModal(refs.escalaExcecaoModal, tecnico ? refs.escalaExcecaoTurno : refs.escalaExcecaoTecnico);
+}
+
+async function saveEscalaExcecao(event) {
+  event.preventDefault();
+  const dataInicio = toStorageDate(refs.escalaExcecaoInicio.value);
+  const dataFim = toStorageDate(refs.escalaExcecaoFim.value) || dataInicio;
+  const ini = escalaParseDate(dataInicio);
+  const fim = escalaParseDate(dataFim);
+  if (!ini || !fim) {
+    alert("Informe o período da exceção.");
+    return;
+  }
+  if (fim < ini) {
+    alert("A data final precisa ser igual ou depois da inicial.");
+    return;
+  }
+  await escalaGarantirConfigSalva();
+  await sendData("/api/escala-excecoes", "POST", {
+    id: createId(),
+    tipo: "tecnico",
+    dataInicio,
+    dataFim,
+    tecnico: refs.escalaExcecaoTecnico.value,
+    turnoId: refs.escalaExcecaoTurno.value,
+    motivo: refs.escalaExcecaoMotivo.value.trim(),
+  });
+  closeModal(refs.escalaExcecaoModal);
+  await reloadEscala();
+}
+
+async function deleteEscalaExcecao(id) {
+  const item = state.escalaExcecoes.find((e) => String(e.id) === String(id));
+  if (!item) return;
+  if (!confirm(`Excluir a exceção "${ESCALA_TIPO_LABELS[item.tipo] || item.tipo}" (${escalaPeriodoTexto(item)})?`)) return;
+  await deleteData(`/api/escala-excecoes/${encodeURIComponent(id)}`);
+  await reloadEscala();
+}
+
+// ── Atualizações do sistema (atualizacoes.html) ──────────────────────────────
+// Atualizações de banco de dados e de estações, cada uma com técnico responsável
+// e confirmação de realização (realizada / realizada_em / confirmado_por).
+// Tabela fora de supabaseAllData: carregada só nesta página (supabase/atualizacoes.sql).
+
+const ATU_TIPO_LABELS = { banco: "Banco de dados", estacao: "Estações" };
+
+function toAtualizacaoJs(row) {
+  return {
+    id: row.id,
+    tipo: row.tipo,
+    cliente: row.cliente || "",
+    tecnico: row.tecnico || "",
+    dataPrevista: row.data_prevista || "",
+    versao: row.versao || "",
+    estacoes: row.estacoes || "",
+    observacao: row.observacao || "",
+    realizada: row.realizada === true,
+    realizadaEm: row.realizada_em || "",
+    confirmadoPor: row.confirmado_por || "",
+    createdAt: row.created_at,
+  };
+}
+
+async function loadAtualizacoes() {
+  const { data, error } = await db.from("atualizacoes").select("*").order("created_at", { ascending: false });
+  // Tabela ainda não criada (supabase/atualizacoes.sql): lista vazia e aviso.
+  state.atualizacoesErro = Boolean(error);
+  state.atualizacoes = error ? [] : data.map(toAtualizacaoJs);
+}
+
+async function reloadAtualizacoes() {
+  await loadAtualizacoes();
+  renderAtualizacoes();
+}
+
+function atuHojeStorage() {
+  const d = new Date();
+  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+}
+
+function atuNomeUsuario() {
+  return (window.auth && window.auth.perfil && (window.auth.perfil.nome || window.auth.perfil.email)) || "";
+}
+
+// Data DD/MM/YYYY → número comparável (YYYYMMDD); vazia vai para o fim.
+function atuDataOrdem(stored) {
+  if (!stored || stored.length !== 10) return 99999999;
+  const [d, m, y] = stored.split("/");
+  return Number(`${y}${m}${d}`) || 99999999;
+}
+
+function atuTecnicosNomes(extra) {
+  const nomes = (state.tecnicos || []).map((t) => t.nome).filter(Boolean);
+  (extra || []).forEach((n) => {
+    if (n && !nomes.some((x) => normalizeText(x) === normalizeText(n))) nomes.push(n);
+  });
+  return nomes.sort((a, b) => String(a).localeCompare(String(b), "pt-BR"));
+}
+
+function atuEhAdmin() {
+  return usuarioVeTudo();
+}
+
+function atuTecnicoDoUsuario() {
+  return tecnicoDoUsuario();
+}
+
+// O técnico só enxerga as atualizações atribuídas a ele; o admin vê todas.
+function atuAtualizacoesVisiveis() {
+  return registrosDoUsuario(state.atualizacoes || []);
+}
+
+function populateAtuTecnicoFilter() {
+  if (!refs.atuTecnicoFilter) return;
+  const campo = refs.atuTecnicoFilter.closest(".filter-field");
+  if (campo) campo.style.display = atuEhAdmin() ? "" : "none";
+  if (!atuEhAdmin()) { refs.atuTecnicoFilter.value = ""; return; }
+  const atual = refs.atuTecnicoFilter.value;
+  const nomes = atuTecnicosNomes((state.atualizacoes || []).map((a) => a.tecnico));
+  refs.atuTecnicoFilter.innerHTML = `<option value="">Todos</option>` +
+    nomes.map((n) => `<option value="${escapeAttribute(n)}">${escapeHtml(n)}</option>`).join("");
+  refs.atuTecnicoFilter.value = nomes.includes(atual) ? atual : "";
+}
+
+function renderAtualizacoes() {
+  if (!refs.atuTableBody) return;
+  const items = atuAtualizacoesVisiveis();
+  populateAtuTecnicoFilter();
+
+  if (refs.atuAviso) {
+    let aviso = "";
+    if (state.atualizacoesErro) {
+      aviso = "Não foi possível carregar as atualizações. Rode supabase/atualizacoes.sql no SQL Editor do Supabase.";
+    } else if (!atuEhAdmin() && window.auth && window.auth.papel === "tecnico") {
+      aviso = `Mostrando só as atualizações atribuídas a você (${atuTecnicoDoUsuario() || "técnico não identificado"}).`;
+    } else if (!atuEhAdmin()) {
+      aviso = "As atualizações ficam visíveis só para o administrador e para o técnico responsável.";
+    }
+    refs.atuAviso.hidden = !aviso;
+    refs.atuAviso.textContent = aviso;
+  }
+
+  const busca = normalizeText(refs.atuSearchInput ? refs.atuSearchInput.value : "");
+  const tipo = refs.atuTipoFilter ? refs.atuTipoFilter.value : "";
+  const situacao = refs.atuSituacaoFilter ? refs.atuSituacaoFilter.value : "";
+  const tecnico = refs.atuTecnicoFilter ? refs.atuTecnicoFilter.value : "";
+
+  const filtrados = items
+    .filter((a) => !tipo || a.tipo === tipo)
+    .filter((a) => !situacao || (situacao === "realizada" ? a.realizada : !a.realizada))
+    .filter((a) => !tecnico || normalizeText(a.tecnico) === normalizeText(tecnico))
+    .filter((a) => !busca || [a.cliente, a.tecnico, a.versao, a.estacoes, a.observacao, ATU_TIPO_LABELS[a.tipo]]
+      .some((v) => normalizeText(v).includes(busca)))
+    .sort((a, b) => {
+      // Pendentes primeiro (pela data prevista); realizadas depois (mais recentes primeiro).
+      if (a.realizada !== b.realizada) return a.realizada ? 1 : -1;
+      if (a.realizada) return atuDataOrdem(b.realizadaEm) - atuDataOrdem(a.realizadaEm);
+      return atuDataOrdem(a.dataPrevista) - atuDataOrdem(b.dataPrevista) || a.cliente.localeCompare(b.cliente, "pt-BR");
+    });
+
+  const podeConfirmar = Boolean(window.auth && window.auth.can("write"));
+  const podeGerenciar = atuEhAdmin();
+  const hoje = atuDataOrdem(atuHojeStorage());
+
+  refs.atuTableBody.innerHTML = filtrados.map((a) => {
+    const atrasada = !a.realizada && a.dataPrevista && atuDataOrdem(a.dataPrevista) < hoje;
+    const detalhe = [a.versao && `Versão ${a.versao}`, a.tipo === "estacao" && a.estacoes].filter(Boolean).join(" · ");
+    const situacaoHtml = a.realizada
+      ? `<span class="status status-concluido">Realizada</span><small class="atu-nota">${escapeHtml([a.realizadaEm, a.confirmadoPor && `por ${a.confirmadoPor}`].filter(Boolean).join(" "))}</small>`
+      : `<span class="status ${atrasada ? "status-pendente" : "status-em-andamento"}">${atrasada ? "Atrasada" : "Pendente"}</span>`;
+    // Técnico só marca como realizada; editar/excluir é do admin.
+    const acoes = `
+      ${podeConfirmar && !a.realizada ? `<button type="button" onclick="confirmarAtualizacao('${escapeAttribute(a.id)}')">Realizado</button>` : ""}
+      ${podeGerenciar ? `<button type="button" class="ghost" onclick="editAtualizacao('${escapeAttribute(a.id)}')">Editar</button>
+      <button type="button" class="danger" onclick="deleteAtualizacao('${escapeAttribute(a.id)}')">Excluir</button>` : ""}`;
+    return `<tr>
+      <td><span class="status atu-tipo-${a.tipo}">${escapeHtml(ATU_TIPO_LABELS[a.tipo] || a.tipo)}</span></td>
+      <td><strong>${escapeHtml(a.cliente)}</strong>${a.observacao ? `<small class="atu-nota" title="${escapeAttribute(a.observacao)}">${escapeHtml(a.observacao)}</small>` : ""}</td>
+      <td>${escapeHtml(detalhe || "—")}</td>
+      <td>${escapeHtml(a.tecnico || "—")}</td>
+      <td>${escapeHtml(a.dataPrevista || "—")}</td>
+      <td>${situacaoHtml}</td>
+      <td class="atu-acoes">${acoes}</td>
+    </tr>`;
+  }).join("");
+
+  if (refs.atuEmptyState) {
+    refs.atuEmptyState.style.display = filtrados.length ? "none" : "block";
+    refs.atuEmptyState.textContent = items.length ? "Nenhuma atualização encontrada com esses filtros." : "Nenhuma atualização cadastrada.";
+  }
+}
+
+function renderAtuClientMenu() {
+  if (!refs.atuClientMenu) return;
+  const typed = normalizeText(refs.atuCliente.value);
+  // No lote, quem já virou chip sai da lista.
+  const escolhidos = atuModoLote() ? (state.atuClientesLote || []).map(normalizeText) : [];
+  const clients = [...state.clientes]
+    .filter((c) => !escolhidos.includes(normalizeText(c.nome)))
+    .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  const filtered = typed ? clients.filter((c) => normalizeText(c.nome).includes(typed)) : clients;
+  const tecnicoEscolhido = refs.atuTecnico ? refs.atuTecnico.value : "";
+  refs.atuClientMenu.innerHTML = filtered.length
+    ? filtered.map((c) => {
+      const dono = atuTecnicoPendenteDoCliente(c.nome, refs.atuId.value);
+      const bloqueado = Boolean(dono && tecnicoEscolhido && normalizeText(dono) !== normalizeText(tecnicoEscolhido));
+      const nota = dono ? `<small class="combo-phone"> · pendente com ${escapeHtml(dono)}</small>` : "";
+      return bloqueado
+        ? `<div class="combo-option combo-option--bloqueada" title="Cliente com atualização pendente com ${escapeAttribute(dono)}">${escapeHtml(c.nome)}${nota}</div>`
+        : `<button type="button" class="combo-option" data-atu-cliente="${escapeAttribute(c.nome)}">${escapeHtml(c.nome)}${nota}</button>`;
+    }).join("")
+    : `<div class="combo-empty">Nenhum cliente encontrado.</div>`;
+  refs.atuClientMenu.querySelectorAll("[data-atu-cliente]").forEach((btn) => {
+    btn.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      const nome = btn.getAttribute("data-atu-cliente");
+      if (atuModoLote()) {
+        atuAdicionarClienteLote(nome);
+        refs.atuCliente.value = "";
+        renderAtuClientMenu(); // menu continua aberto para escolher o próximo
+        return;
+      }
+      refs.atuCliente.value = nome;
+      closeAtuClientMenu();
+    });
+  });
+}
+
+// ── Lote: nova atualização para vários clientes de uma vez ──
+// Só ao criar (sem id). Cada cliente escolhido vira um chip; ao salvar, uma
+// atualização por cliente, com os mesmos técnico, tipo, data, versão etc.
+
+// Um cliente, um técnico: enquanto houver atualização pendente do cliente com
+// um técnico, ela não pode ir para outro (o banco também barra — trigger
+// atualizacoes_cliente_um_tecnico em atualizacoes.sql).
+function atuTecnicoPendenteDoCliente(cliente, ignorarId) {
+  const alvo = normalizeText(cliente);
+  const item = (state.atualizacoes || []).find((a) =>
+    !a.realizada && normalizeText(a.cliente) === alvo && String(a.id) !== String(ignorarId || ""));
+  return item ? item.tecnico : "";
+}
+
+// Lista "Cliente (técnico X)" dos clientes que já estão pendentes com outro técnico.
+function atuConflitosTecnico(clientes, tecnico, ignorarId) {
+  return clientes
+    .map((cliente) => ({ cliente, dono: atuTecnicoPendenteDoCliente(cliente, ignorarId) }))
+    .filter(({ dono }) => dono && normalizeText(dono) !== normalizeText(tecnico));
+}
+
+function atuMensagemConflito(conflitos) {
+  const linhas = conflitos.map(({ cliente, dono }) => `- ${cliente}: pendente com ${dono}`).join("\n");
+  return `Estes clientes já têm atualização pendente com outro técnico e não podem ser atribuídos a este:\n\n${linhas}\n\nConclua (Realizado) ou reatribua a atualização existente antes.`;
+}
+
+function atuModoLote() {
+  return Boolean(refs.atuId && !refs.atuId.value);
+}
+
+function atuAdicionarClienteLote(nome) {
+  const cliente = state.clientes.find((c) => normalizeText(c.nome) === normalizeText(nome));
+  if (!cliente) return false;
+  const tecnico = refs.atuTecnico ? refs.atuTecnico.value : "";
+  const conflitos = tecnico ? atuConflitosTecnico([cliente.nome], tecnico) : [];
+  if (conflitos.length) {
+    alert(`O cliente "${cliente.nome}" já tem atualização pendente com ${conflitos[0].dono}. Ele não pode ser atribuído a outro técnico.`);
+    return "conflito";
+  }
+  state.atuClientesLote = state.atuClientesLote || [];
+  if (!state.atuClientesLote.some((n) => normalizeText(n) === normalizeText(cliente.nome))) {
+    state.atuClientesLote.push(cliente.nome);
+  }
+  renderAtuClientesLote();
+  return true;
+}
+
+function removerAtuClienteLote(indice) {
+  (state.atuClientesLote || []).splice(indice, 1);
+  renderAtuClientesLote();
+}
+
+function renderAtuClientesLote() {
+  if (!refs.atuClientesChips) return;
+  const lista = state.atuClientesLote || [];
+  const tecnico = refs.atuTecnico ? refs.atuTecnico.value : "";
+  refs.atuClientesChips.innerHTML = lista.map((nome, i) => {
+    const dono = atuTecnicoPendenteDoCliente(nome);
+    const conflito = Boolean(dono && tecnico && normalizeText(dono) !== normalizeText(tecnico));
+    return `<span class="atu-chip${conflito ? " atu-chip--conflito" : ""}"${conflito ? ` title="Pendente com ${escapeAttribute(dono)} — não pode ir para outro técnico"` : ""}>${escapeHtml(nome)}${conflito ? ` <small>(com ${escapeHtml(dono)})</small>` : ""}<button type="button" onclick="removerAtuClienteLote(${i})" aria-label="Remover ${escapeAttribute(nome)}">×</button></span>`;
+  }).join("");
+  if (refs.atuLoteInfo) {
+    refs.atuLoteInfo.textContent = lista.length
+      ? `${lista.length} ${lista.length === 1 ? "cliente" : "clientes"} — será criada uma atualização para cada um.`
+      : "Escolha um ou mais clientes. Será criada uma atualização para cada um.";
+  }
+}
+
+// Enter no campo de cliente (modo lote) adiciona o nome digitado, se for de um cliente cadastrado.
+function onAtuClienteKeydown(event) {
+  if (event.key !== "Enter" || !atuModoLote()) return;
+  event.preventDefault();
+  const texto = refs.atuCliente.value.trim();
+  if (!texto) return;
+  const exato = state.clientes.find((c) => normalizeText(c.nome) === normalizeText(texto));
+  const parecidos = state.clientes.filter((c) => normalizeText(c.nome).includes(normalizeText(texto)));
+  const alvo = exato || (parecidos.length === 1 ? parecidos[0] : null);
+  if (alvo) {
+    atuAdicionarClienteLote(alvo.nome);
+    refs.atuCliente.value = "";
+    renderAtuClientMenu();
+  }
+}
+
+function openAtuClientMenu() {
+  if (!refs.atuClientMenu) return;
+  renderAtuClientMenu();
+  refs.atuClientMenu.classList.add("open");
+}
+
+function closeAtuClientMenu() {
+  if (refs.atuClientMenu) refs.atuClientMenu.classList.remove("open");
+}
+
+function onAtuTipoChange() {
+  const estacao = refs.atuTipo.value === "estacao";
+  if (refs.atuEstacoesRow) refs.atuEstacoesRow.style.display = estacao ? "" : "none";
+  if (refs.atuVersaoHelper) refs.atuVersaoHelper.style.display = estacao ? "none" : "";
+}
+
+function onAtuRealizadaChange() {
+  const realizada = refs.atuRealizada.value === "true";
+  if (refs.atuRealizadaEmRow) refs.atuRealizadaEmRow.style.display = realizada ? "" : "none";
+  if (realizada && !refs.atuRealizadaEm.value) refs.atuRealizadaEm.value = storageToInputDate(atuHojeStorage());
+}
+
+function openAtualizacaoModal(item) {
+  if (!refs.atuFormModal) return;
+  const a = item || {};
+  // Técnico só cria/edita atualizações dele mesmo (a RLS barraria outro nome).
+  const meuTecnico = atuEhAdmin() ? "" : atuTecnicoDoUsuario();
+  if (!atuEhAdmin() && !meuTecnico) {
+    alert("Seu usuário não está vinculado a um técnico. Peça ao administrador para cadastrar seu e-mail no técnico, em Setup.");
+    return;
+  }
+  refs.atuFormModalTitle.textContent = item ? "Editar atualização" : "Nova atualização";
+  refs.atuId.value = a.id || "";
+  refs.atuTipo.value = a.tipo || "banco";
+  refs.atuCliente.value = item ? a.cliente || "" : "";
+  // Nova: vários clientes (chips). Edição: um cliente só.
+  state.atuClientesLote = [];
+  if (refs.atuLoteRow) refs.atuLoteRow.hidden = Boolean(item);
+  if (refs.atuClienteLabel) refs.atuClienteLabel.textContent = item ? "Cliente" : "Clientes";
+  refs.atuCliente.placeholder = item ? "" : "Busque e escolha um ou mais clientes...";
+  renderAtuClientesLote();
+  if (meuTecnico) {
+    refs.atuTecnico.innerHTML = `<option value="${escapeAttribute(meuTecnico)}">${escapeHtml(meuTecnico)}</option>`;
+    refs.atuTecnico.value = meuTecnico;
+    refs.atuTecnico.disabled = true;
+  } else {
+    const nomes = atuTecnicosNomes([a.tecnico]);
+    refs.atuTecnico.innerHTML = `<option value="">Selecione</option>` +
+      nomes.map((n) => `<option value="${escapeAttribute(n)}">${escapeHtml(n)}</option>`).join("");
+    refs.atuTecnico.value = a.tecnico || "";
+    refs.atuTecnico.disabled = false;
+  }
+  refs.atuDataPrevista.value = a.dataPrevista ? storageToInputDate(a.dataPrevista) : "";
+  refs.atuVersao.value = a.versao || "";
+  refs.atuEstacoes.value = a.estacoes || "";
+  refs.atuObservacao.value = a.observacao || "";
+  refs.atuRealizada.value = a.realizada ? "true" : "false";
+  refs.atuRealizadaEm.value = a.realizadaEm ? storageToInputDate(a.realizadaEm) : "";
+  onAtuTipoChange();
+  onAtuRealizadaChange();
+  openModal(refs.atuFormModal, item && !meuTecnico ? refs.atuTecnico : refs.atuCliente);
+}
+
+function editAtualizacao(id) {
+  const item = (state.atualizacoes || []).find((a) => String(a.id) === String(id));
+  if (item) openAtualizacaoModal(item);
+}
+
+// Atualização de banco confirmada com versão → grava também a versão do banco no cliente.
+async function atuAtualizarVersaoCliente(atu) {
+  if (atu.tipo !== "banco" || !atu.realizada || !atu.versao) return;
+  const cliente = state.clientes.find((c) => normalizeText(c.nome) === normalizeText(atu.cliente));
+  if (!cliente) return;
+  await sendData(`/api/clientes-versao/${encodeURIComponent(cliente.id)}`, "PATCH", {
+    versaoBanco: atu.versao,
+    updatedAt: new Date().toISOString(),
+  });
+}
+
+async function saveAtualizacao(event) {
+  event.preventDefault();
+  if (atuModoLote()) { await saveAtualizacoesLote(); return; }
+  const cliente = refs.atuCliente.value.trim();
+  const clienteCadastrado = state.clientes.find((c) => normalizeText(c.nome) === normalizeText(cliente));
+  if (!clienteCadastrado) {
+    alert("Selecione um cliente cadastrado.");
+    refs.atuCliente.focus();
+    return;
+  }
+  if (!refs.atuTecnico.value) {
+    alert("Informe o técnico responsável.");
+    refs.atuTecnico.focus();
+    return;
+  }
+  const realizada = refs.atuRealizada.value === "true";
+  const realizadaEm = realizada ? toStorageDate(refs.atuRealizadaEm.value) : "";
+  if (realizada && !realizadaEm) {
+    alert("Informe a data em que a atualização foi realizada.");
+    refs.atuRealizadaEm.focus();
+    return;
+  }
+
+  const id = refs.atuId.value;
+  const anterior = id ? (state.atualizacoes || []).find((a) => String(a.id) === String(id)) : null;
+  if (refs.atuRealizada.value !== "true") {
+    const conflitos = atuConflitosTecnico([clienteCadastrado.nome], refs.atuTecnico.value, id);
+    if (conflitos.length) {
+      alert(atuMensagemConflito(conflitos));
+      return;
+    }
+  }
+  const payload = {
+    id: id || createId(),
+    tipo: refs.atuTipo.value,
+    cliente: clienteCadastrado.nome,
+    tecnico: refs.atuTecnico.value,
+    dataPrevista: toStorageDate(refs.atuDataPrevista.value) || "",
+    versao: refs.atuVersao.value.trim(),
+    estacoes: refs.atuEstacoes.value.trim(),
+    observacao: refs.atuObservacao.value.trim(),
+    realizada,
+    realizadaEm,
+    // Mantém quem confirmou originalmente; se está confirmando agora, é o usuário atual.
+    confirmadoPor: realizada ? (anterior && anterior.realizada && anterior.confirmadoPor) || atuNomeUsuario() : "",
+  };
+
+  await sendData(id ? `/api/atualizacoes/${encodeURIComponent(id)}` : "/api/atualizacoes", id ? "PUT" : "POST", payload);
+  // Só mexe na versão do cliente quando a confirmação ou a versão mudou agora —
+  // editar uma atualização antiga não pode voltar o cliente para uma versão velha.
+  if (!anterior || !anterior.realizada || anterior.versao !== payload.versao) await atuAtualizarVersaoCliente(payload);
+  closeModal(refs.atuFormModal);
+  await reloadAtualizacoes();
+}
+
+async function saveAtualizacoesLote() {
+  // Um nome digitado e não adicionado como chip também entra, se for de cliente cadastrado.
+  const digitado = refs.atuCliente.value.trim();
+  const adicionado = digitado ? atuAdicionarClienteLote(digitado) : true;
+  if (adicionado !== true) {
+    // false = não é cliente cadastrado; "conflito" = o aviso já foi mostrado.
+    if (adicionado === false) alert(`"${digitado}" não é um cliente cadastrado. Escolha na lista.`);
+    refs.atuCliente.focus();
+    return;
+  }
+  refs.atuCliente.value = "";
+  const clientes = state.atuClientesLote || [];
+  if (!clientes.length) {
+    alert("Escolha pelo menos um cliente.");
+    refs.atuCliente.focus();
+    return;
+  }
+  if (!refs.atuTecnico.value) {
+    alert("Informe o técnico responsável.");
+    refs.atuTecnico.focus();
+    return;
+  }
+  const realizada = refs.atuRealizada.value === "true";
+  const realizadaEm = realizada ? toStorageDate(refs.atuRealizadaEm.value) : "";
+  if (realizada && !realizadaEm) {
+    alert("Informe a data em que a atualização foi realizada.");
+    refs.atuRealizadaEm.focus();
+    return;
+  }
+  const base = {
+    tipo: refs.atuTipo.value,
+    tecnico: refs.atuTecnico.value,
+    dataPrevista: toStorageDate(refs.atuDataPrevista.value) || "",
+    versao: refs.atuVersao.value.trim(),
+    estacoes: refs.atuEstacoes.value.trim(),
+    observacao: refs.atuObservacao.value.trim(),
+    realizada,
+    realizadaEm,
+    confirmadoPor: realizada ? atuNomeUsuario() : "",
+  };
+  const conflitosLote = atuConflitosTecnico(clientes, refs.atuTecnico.value);
+  if (conflitosLote.length) {
+    alert(atuMensagemConflito(conflitosLote));
+    return;
+  }
+  if (clientes.length > 1 && !confirm(`Criar ${clientes.length} atualizações (uma por cliente) para ${base.tecnico}?`)) return;
+
+  const itens = clientes.map((cliente) => ({ ...base, id: createId(), cliente }));
+  await sendData("/api/atualizacoes-lote", "POST", { itens });
+  for (const item of itens) await atuAtualizarVersaoCliente(item);
+  closeModal(refs.atuFormModal);
+  await reloadAtualizacoes();
+}
+
+async function confirmarAtualizacao(id) {
+  const item = (state.atualizacoes || []).find((a) => String(a.id) === String(id));
+  if (!item || item.realizada) return;
+  const extra = item.tipo === "banco" && item.versao
+    ? `\n\nA versão do banco do cliente será atualizada para ${item.versao}.`
+    : "";
+  if (!confirm(`Confirmar que a atualização de ${ATU_TIPO_LABELS[item.tipo] || item.tipo} do cliente "${item.cliente}" foi realizada hoje?${extra}`)) return;
+  const realizadaEm = atuHojeStorage();
+  const confirmadoPor = atuNomeUsuario();
+  await sendData(`/api/atualizacoes-confirmar/${encodeURIComponent(id)}`, "PATCH", { realizadaEm, confirmadoPor });
+  await atuAtualizarVersaoCliente({ ...item, realizada: true });
+  await reloadAtualizacoes();
+}
+
+async function deleteAtualizacao(id) {
+  const item = (state.atualizacoes || []).find((a) => String(a.id) === String(id));
+  if (!item) return;
+  if (!confirm(`Excluir a atualização de ${ATU_TIPO_LABELS[item.tipo] || item.tipo} do cliente "${item.cliente}"?`)) return;
+  await deleteData(`/api/atualizacoes/${encodeURIComponent(id)}`);
+  await reloadAtualizacoes();
+}
+
+// ── TDI (tdi.html) ───────────────────────────────────────────────────────────
+// O técnico descreve o TDI em texto livre (com cliente e imagem opcional), a IA
+// (Claude, via proxy.js em localhost:3001) devolve título + conteúdo
+// estruturados, o técnico revisa/ajusta e salva. Tabela `tdis`, fora de
+// supabaseAllData (carregada só nesta página por loadTdis).
+
+const TDI_PROXY_URL = "http://localhost:3001/api/chat";
+const TDI_MODELO = "claude-opus-5-5";
+const TDI_IMAGEM_MAX_LADO = 1600;
+
+// Estrutura pedida à IA. Ajuste aqui as seções se o modelo de TDI da equipe mudar.
+const TDI_INSTRUCOES = `Você ajuda técnicos de suporte do sistema Gestão Suporte (ERP: financeiro, documentos fiscais, SPED, cadastros) a escrever TDIs.
+O técnico descreve a situação com as próprias palavras, às vezes com um print da tela. Transforme isso num TDI claro e completo, em português do Brasil, que outra pessoa da equipe consiga entender e executar sem conversar com o técnico.
+
+Organize o conteúdo nestas seções, cada uma começando com "## " e o nome da seção:
+## Resumo
+## Cliente e ambiente
+## Descrição
+## Passos para reproduzir
+## Resultado esperado
+## Resultado atual
+## Impacto
+## Informações adicionais
+
+Use listas com "- " ou "1. " quando ajudar. Use só o que o técnico informou e o que aparece na imagem: não invente versões, telas, valores ou nomes. Quando faltar algo importante, escreva "A confirmar" na seção. Se uma seção não se aplicar, escreva "Não se aplica".
+O título deve ser curto e específico (até 90 caracteres), sem a palavra "TDI".`;
+
+const TDI_SCHEMA = {
+  type: "object",
+  properties: {
+    titulo: { type: "string" },
+    conteudo: { type: "string" },
+  },
+  required: ["titulo", "conteudo"],
+  additionalProperties: false,
+};
+
+function toTdiJs(row) {
+  return {
+    id: row.id,
+    cliente: row.cliente || "",
+    titulo: row.titulo || "",
+    conteudo: row.conteudo || "",
+    descricao: row.descricao || "",
+    imagem: row.imagem || "",
+    criadoPor: row.criado_por,
+    criadoPorNome: row.criado_por_nome || "",
+    createdAt: row.created_at,
+  };
+}
+
+async function loadTdis() {
+  const { data, error } = await db.from("tdis").select("*").order("created_at", { ascending: false });
+  // Tabela ainda não criada (supabase/tdis.sql): lista vazia e aviso.
+  state.tdisErro = Boolean(error);
+  state.tdis = error ? [] : data.map(toTdiJs);
+}
+
+async function reloadTdis() {
+  await loadTdis();
+  renderTdis();
+}
+
+// Perfil Qualidade: vê os TDIs de todos os técnicos, em grid, somente leitura.
+function tdiModoQualidade() {
+  return Boolean(window.auth && window.auth.papel === "qualidade");
+}
+
+// Admin e Qualidade veem todos; os demais só os que criaram (a RLS já garante; aqui fica coerente).
+function tdisVisiveis() {
+  const items = state.tdis || [];
+  if (usuarioVeTudo() || tdiModoQualidade()) return items;
+  const meuId = window.auth && window.auth.user ? window.auth.user.id : null;
+  return items.filter((t) => t.criadoPor === meuId);
+}
+
+function tdiDataHora(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return `${d.toLocaleDateString("pt-BR")} ${d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+}
+
+// Converte o texto do TDI (## seções, listas "- " e "1. ") em HTML, sempre escapado.
+function tdiRenderDoc(texto) {
+  const linhas = String(texto || "").replace(/\r/g, "").split("\n");
+  const html = [];
+  let lista = null;
+  const fecharLista = () => { if (lista) { html.push(`</${lista}>`); lista = null; } };
+  linhas.forEach((bruta) => {
+    const linha = bruta.trim();
+    if (!linha) { fecharLista(); return; }
+    const titulo = linha.match(/^#{1,6}\s+(.*)$/);
+    const ul = linha.match(/^[-*•]\s+(.*)$/);
+    const ol = linha.match(/^\d+[.)]\s+(.*)$/);
+    if (titulo) { fecharLista(); html.push(`<h3>${escapeHtml(titulo[1])}</h3>`); return; }
+    if (ul || ol) {
+      const tipo = ul ? "ul" : "ol";
+      if (lista !== tipo) { fecharLista(); html.push(`<${tipo}>`); lista = tipo; }
+      html.push(`<li>${escapeHtml((ul || ol)[1])}</li>`);
+      return;
+    }
+    fecharLista();
+    html.push(`<p>${escapeHtml(linha)}</p>`);
+  });
+  fecharLista();
+  return html.join("");
+}
+
+function tdiTextoCompleto(t) {
+  return `${t.titulo}\nCliente: ${t.cliente}\n\n${t.conteudo}`;
+}
+
+// ── Lista ──
+
+function renderTdis() {
+  if (!refs.tdiLista) return;
+  if (tdiModoQualidade()) { renderTdiGrid(); return; }
+  const admin = usuarioVeTudo();
+  if (refs.tdiListaTitulo) refs.tdiListaTitulo.textContent = admin ? "TDIs" : "Meus TDIs";
+  if (refs.tdiAviso) {
+    refs.tdiAviso.hidden = !state.tdisErro;
+    refs.tdiAviso.textContent = state.tdisErro
+      ? "Não foi possível carregar os TDIs. Rode supabase/tdis.sql no SQL Editor do Supabase."
+      : "";
+  }
+
+  const items = tdisVisiveis();
+  if (refs.tdiAutorFiltroCampo) refs.tdiAutorFiltroCampo.hidden = !admin;
+  if (admin && refs.tdiAutorFiltro) {
+    const atual = refs.tdiAutorFiltro.value;
+    const autores = [...new Set(items.map((t) => t.criadoPorNome).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+    refs.tdiAutorFiltro.innerHTML = `<option value="">Todos</option>` +
+      autores.map((n) => `<option value="${escapeAttribute(n)}">${escapeHtml(n)}</option>`).join("");
+    refs.tdiAutorFiltro.value = autores.includes(atual) ? atual : "";
+  }
+
+  const busca = normalizeText(refs.tdiBusca ? refs.tdiBusca.value : "");
+  const autor = admin && refs.tdiAutorFiltro ? refs.tdiAutorFiltro.value : "";
+  const filtrados = items
+    .filter((t) => !autor || t.criadoPorNome === autor)
+    .filter((t) => !busca || [t.titulo, t.cliente, t.conteudo, t.criadoPorNome].some((v) => normalizeText(v).includes(busca)));
+
+  refs.tdiLista.innerHTML = filtrados.map((t) => {
+    const resumo = (t.conteudo.split("\n").find((l) => l.trim() && !/^#/.test(l.trim())) || "").trim();
+    return `<button type="button" class="tdi-item" onclick="verTdi('${escapeAttribute(t.id)}')">
+      <span class="tdi-item-titulo">${escapeHtml(t.titulo || "(sem título)")}</span>
+      <span class="tdi-item-meta">${escapeHtml(t.cliente)} · ${escapeHtml(tdiDataHora(t.createdAt))}${admin && t.criadoPorNome ? ` · ${escapeHtml(t.criadoPorNome)}` : ""}${t.imagem ? " · com imagem" : ""}</span>
+      ${resumo ? `<span class="tdi-item-resumo">${escapeHtml(resumo)}</span>` : ""}
+    </button>`;
+  }).join("");
+
+  if (refs.tdiListaVazia) {
+    refs.tdiListaVazia.style.display = filtrados.length ? "none" : "block";
+    refs.tdiListaVazia.textContent = items.length ? "Nenhum TDI encontrado com essa busca." : "Nenhum TDI criado ainda.";
+  }
+}
+
+// ── Grid da Qualidade ──
+
+function tdiPreencherSelect(select, valores) {
+  if (!select) return;
+  const atual = select.value;
+  const lista = [...new Set(valores.filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  select.innerHTML = `<option value="">Todos</option>` + lista.map((v) => `<option value="${escapeAttribute(v)}">${escapeHtml(v)}</option>`).join("");
+  select.value = lista.includes(atual) ? atual : "";
+}
+
+function onTdiGridClick(event) {
+  const th = event.target.closest("th[data-tdi-ordem]");
+  if (th) {
+    const campo = th.getAttribute("data-tdi-ordem");
+    const ordem = state.tdiOrdem || { campo: "createdAt", desc: true };
+    state.tdiOrdem = ordem.campo === campo ? { campo, desc: !ordem.desc } : { campo, desc: campo === "createdAt" };
+    renderTdiGrid();
+    return;
+  }
+  const linha = event.target.closest("tr[data-tdi-id]");
+  if (linha) verTdi(linha.getAttribute("data-tdi-id"));
+}
+
+function renderTdiGrid() {
+  const items = tdisVisiveis();
+  if (refs.tdiListaTitulo) refs.tdiListaTitulo.textContent = "TDIs dos técnicos";
+  if (refs.tdiAviso) {
+    refs.tdiAviso.hidden = !state.tdisErro;
+    refs.tdiAviso.textContent = state.tdisErro
+      ? "Não foi possível carregar os TDIs. Rode supabase/tdis.sql no SQL Editor do Supabase."
+      : "";
+  }
+  if (refs.tdiAutorFiltroCampo) refs.tdiAutorFiltroCampo.hidden = false;
+  document.querySelectorAll(".tdi-filtro-grid").forEach((el) => { el.hidden = false; });
+  if (refs.tdiLista) refs.tdiLista.hidden = true;
+  if (refs.tdiGridWrap) refs.tdiGridWrap.hidden = false;
+  const filtros = refs.tdiAutorFiltro && refs.tdiAutorFiltro.closest(".filters");
+  if (filtros) filtros.classList.add("tdi-filtros--grid");
+
+  tdiPreencherSelect(refs.tdiAutorFiltro, items.map((t) => t.criadoPorNome));
+  tdiPreencherSelect(refs.tdiClienteFiltro, items.map((t) => t.cliente));
+
+  const busca = normalizeText(refs.tdiBusca ? refs.tdiBusca.value : "");
+  const autor = refs.tdiAutorFiltro ? refs.tdiAutorFiltro.value : "";
+  const cliente = refs.tdiClienteFiltro ? refs.tdiClienteFiltro.value : "";
+  // Datas do filtro (YYYY-MM-DD) comparadas com a data local de criação.
+  const de = refs.tdiDataDe ? refs.tdiDataDe.value : "";
+  const ate = refs.tdiDataAte ? refs.tdiDataAte.value : "";
+  const dataLocal = (iso) => {
+    const d = new Date(iso);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  };
+
+  const ordem = state.tdiOrdem || { campo: "createdAt", desc: true };
+  const filtrados = items
+    .filter((t) => !autor || t.criadoPorNome === autor)
+    .filter((t) => !cliente || t.cliente === cliente)
+    .filter((t) => !de || dataLocal(t.createdAt) >= de)
+    .filter((t) => !ate || dataLocal(t.createdAt) <= ate)
+    .filter((t) => !busca || [t.titulo, t.cliente, t.conteudo, t.criadoPorNome].some((v) => normalizeText(v).includes(busca)))
+    .sort((a, b) => {
+      const va = String(a[ordem.campo] || "");
+      const vb = String(b[ordem.campo] || "");
+      const cmp = ordem.campo === "createdAt" ? va.localeCompare(vb) : va.localeCompare(vb, "pt-BR", { sensitivity: "base" });
+      return ordem.desc ? -cmp : cmp;
+    });
+
+  document.querySelectorAll("th[data-tdi-ordem]").forEach((th) => {
+    const ativo = th.getAttribute("data-tdi-ordem") === ordem.campo;
+    th.classList.toggle("tdi-ordem-ativa", ativo);
+    th.setAttribute("aria-sort", ativo ? (ordem.desc ? "descending" : "ascending") : "none");
+    th.dataset.seta = ativo ? (ordem.desc ? " ↓" : " ↑") : "";
+  });
+
+  refs.tdiGridBody.innerHTML = filtrados.map((t) => `
+    <tr data-tdi-id="${escapeAttribute(t.id)}" tabindex="0" title="Abrir TDI">
+      <td data-label="Data" class="tdi-grid-data">${escapeHtml(tdiDataHora(t.createdAt))}</td>
+      <td data-label="Técnico">${escapeHtml(t.criadoPorNome || "—")}</td>
+      <td data-label="Cliente">${escapeHtml(t.cliente)}</td>
+      <td data-label="Título" class="tdi-grid-titulo">${escapeHtml(t.titulo || "(sem título)")}</td>
+      <td data-label="Imagem">${t.imagem ? "Sim" : "—"}</td>
+      <td class="tdi-grid-acao"><button type="button" class="ghost" tabindex="-1">Ver</button></td>
+    </tr>`).join("");
+
+  if (refs.tdiGridTotal) {
+    refs.tdiGridTotal.hidden = !items.length;
+    refs.tdiGridTotal.textContent = `${filtrados.length} de ${items.length} ${items.length === 1 ? "TDI" : "TDIs"}`;
+  }
+  if (refs.tdiListaVazia) {
+    refs.tdiListaVazia.style.display = filtrados.length ? "none" : "block";
+    refs.tdiListaVazia.textContent = items.length ? "Nenhum TDI encontrado com esses filtros." : "Nenhum TDI criado pelos técnicos ainda.";
+  }
+}
+
+function verTdi(id) {
+  const t = (state.tdis || []).find((x) => String(x.id) === String(id));
+  if (!t || !refs.tdiVerModal) return;
+  state.tdiAberto = t.id;
+  refs.tdiVerTitulo.textContent = t.titulo || "TDI";
+  refs.tdiVerMeta.textContent = `${t.cliente} · ${tdiDataHora(t.createdAt)}${t.criadoPorNome ? ` · por ${t.criadoPorNome}` : ""}`;
+  refs.tdiVerConteudo.innerHTML = tdiRenderDoc(t.conteudo);
+  refs.tdiVerImagem.innerHTML = t.imagem ? `<img src="${escapeAttribute(t.imagem)}" alt="Imagem anexada ao TDI" />` : "";
+  refs.tdiVerDescricao.textContent = t.descricao || "—";
+  openModal(refs.tdiVerModal);
+}
+
+async function copiarTdiAberto() {
+  const t = (state.tdis || []).find((x) => String(x.id) === String(state.tdiAberto));
+  if (!t) return;
+  try {
+    await navigator.clipboard.writeText(tdiTextoCompleto(t));
+    refs.tdiCopiarBtn.textContent = "Copiado!";
+    setTimeout(() => { if (refs.tdiCopiarBtn) refs.tdiCopiarBtn.textContent = "Copiar texto"; }, 1500);
+  } catch (_) {
+    alert("Não foi possível copiar. Selecione o texto e copie manualmente.");
+  }
+}
+
+async function excluirTdiAberto() {
+  const t = (state.tdis || []).find((x) => String(x.id) === String(state.tdiAberto));
+  if (!t) return;
+  if (!confirm(`Excluir o TDI "${t.titulo}"?`)) return;
+  await deleteData(`/api/tdis/${encodeURIComponent(t.id)}`);
+  closeModal(refs.tdiVerModal);
+  await reloadTdis();
+}
+
+// ── Composer (estilo chat) ──
+
+function tdiAtualizarEnviar() {
+  if (!refs.tdiEnviarBtn) return;
+  const temConteudo = refs.tdiTexto.value.trim() || state.tdiImagem;
+  refs.tdiEnviarBtn.disabled = Boolean(state.tdiCarregando) || !temConteudo;
+}
+
+function tdiAutoAltura() {
+  refs.tdiTexto.style.height = "auto";
+  refs.tdiTexto.style.height = Math.min(refs.tdiTexto.scrollHeight, 260) + "px";
+}
+
+function onTdiTextoKeydown(event) {
+  if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+    event.preventDefault();
+    if (!refs.tdiEnviarBtn.disabled) refs.tdiPromptForm.requestSubmit();
+  }
+}
+
+function renderTdiClientMenu() {
+  if (!refs.tdiClientMenu) return;
+  const typed = normalizeText(refs.tdiCliente.value);
+  const clients = [...state.clientes].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  const filtered = typed ? clients.filter((c) => normalizeText(c.nome).includes(typed)) : clients;
+  refs.tdiClientMenu.innerHTML = filtered.length
+    ? filtered.map((c) => `<button type="button" class="combo-option" data-tdi-cliente="${escapeAttribute(c.nome)}">${escapeHtml(c.nome)}</button>`).join("")
+    : `<div class="combo-empty">Nenhum cliente encontrado.</div>`;
+  refs.tdiClientMenu.querySelectorAll("[data-tdi-cliente]").forEach((btn) => {
+    btn.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      refs.tdiCliente.value = btn.getAttribute("data-tdi-cliente");
+      closeTdiClientMenu();
+      refs.tdiTexto.focus();
+    });
+  });
+}
+
+function openTdiClientMenu() {
+  if (!refs.tdiClientMenu) return;
+  renderTdiClientMenu();
+  refs.tdiClientMenu.classList.add("open");
+}
+
+function closeTdiClientMenu() {
+  if (refs.tdiClientMenu) refs.tdiClientMenu.classList.remove("open");
+}
+
+// Reduz a imagem no navegador (lado maior até TDI_IMAGEM_MAX_LADO, JPEG) para
+// caber no banco e na requisição à IA.
+function tdiLerImagem(arquivo) {
+  return new Promise((resolve, reject) => {
+    const leitor = new FileReader();
+    leitor.onerror = () => reject(new Error("Não foi possível ler a imagem."));
+    leitor.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Arquivo de imagem inválido."));
+      img.onload = () => {
+        const escala = Math.min(1, TDI_IMAGEM_MAX_LADO / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * escala);
+        canvas.height = Math.round(img.height * escala);
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.85));
+      };
+      img.src = leitor.result;
+    };
+    leitor.readAsDataURL(arquivo);
+  });
+}
+
+async function onTdiArquivoChange() {
+  const arquivo = refs.tdiArquivo.files && refs.tdiArquivo.files[0];
+  refs.tdiArquivo.value = "";
+  if (!arquivo) return;
+  if (!arquivo.type.startsWith("image/")) { alert("Anexe uma imagem (print da tela, foto...)."); return; }
+  try {
+    state.tdiImagem = await tdiLerImagem(arquivo);
+    renderTdiImagemPreview();
+    tdiAtualizarEnviar();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+function renderTdiImagemPreview() {
+  if (!refs.tdiImagemPreview) return;
+  refs.tdiImagemPreview.hidden = !state.tdiImagem;
+  refs.tdiImagemPreview.innerHTML = state.tdiImagem
+    ? `<div class="tdi-thumb"><img src="${escapeAttribute(state.tdiImagem)}" alt="Imagem anexada" />
+        <button type="button" class="tdi-thumb-remover" onclick="removerTdiImagem()" aria-label="Remover imagem">×</button></div>`
+    : "";
+}
+
+function removerTdiImagem() {
+  state.tdiImagem = "";
+  renderTdiImagemPreview();
+  tdiAtualizarEnviar();
+}
+
+// Chama a IA pelo proxy local. Pedido único e sem histórico: num ajuste, o
+// rascunho atual vai junto no texto (mais simples e robusto que reenviar a conversa).
+async function tdiChamarIA({ cliente, descricao, imagem, rascunho, ajuste }) {
+  const partes = [];
+  if (imagem) {
+    const [cabecalho, dados] = imagem.split(",");
+    const mediaType = (cabecalho.match(/data:([^;]+)/) || [])[1] || "image/jpeg";
+    partes.push({ type: "image", source: { type: "base64", media_type: mediaType, data: dados } });
+  }
+  let texto = `Cliente: ${cliente}\n\nDescrição do técnico:\n${descricao}`;
+  if (rascunho) {
+    texto += `\n\nVersão atual do TDI:\nTítulo: ${rascunho.titulo}\n${rascunho.conteudo}\n\nAjuste pedido pelo técnico (aplique e devolva o TDI completo):\n${ajuste}`;
+  }
+  partes.push({ type: "text", text: texto });
+
+  let resposta;
+  try {
+    resposta = await fetch(TDI_PROXY_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "anthropic-version": "2026-10-21",
+        "anthropic-beta": "server-side-fallback-2026-07-01",
+      },
+      body: JSON.stringify({
+        model: TDI_MODELO,
+        max_tokens: 16000,
+        // Se o modelo recusar por política, a API tenta de novo num modelo alternativo.
+        fallbacks: "default",
+        output_config: {
+          effort: "medium",
+          format: { type: "json_schema", schema: TDI_SCHEMA },
+        },
+        system: TDI_INSTRUCOES,
+        messages: [{ role: "user", content: partes }],
+      }),
+    });
+  } catch (_) {
+    throw new Error("Assistente de IA indisponível. Na máquina que roda o proxy, abra um terminal na pasta do projeto e execute: node proxy.js");
+  }
+
+  const data = await resposta.json().catch(() => ({}));
+  if (!resposta.ok) {
+    throw new Error((data.error && data.error.message) || `Erro ${resposta.status} ao falar com a IA.`);
+  }
+  if (data.stop_reason === "refusal") {
+    throw new Error("A IA não conseguiu montar este TDI. Reformule a descrição e tente de novo.");
+  }
+  if (data.stop_reason === "max_tokens") {
+    throw new Error("O TDI ficou grande demais e a resposta foi cortada. Tente resumir a descrição.");
+  }
+  const bloco = (data.content || []).find((b) => b.type === "text");
+  let tdi;
+  try {
+    tdi = JSON.parse(bloco ? bloco.text : "");
+  } catch (_) {
+    throw new Error("A resposta da IA veio num formato inesperado. Tente de novo.");
+  }
+  return { titulo: String(tdi.titulo || "").trim(), conteudo: String(tdi.conteudo || "").trim() };
+}
+
+function renderTdiConversa() {
+  if (!refs.tdiConversa) return;
+  const r = state.tdiRascunho;
+  const msgs = (state.tdiMensagens || []).map((m) =>
+    `<div class="tdi-msg tdi-msg--usuario">${m.imagem ? `<img src="${escapeAttribute(m.imagem)}" alt="" />` : ""}${escapeHtml(m.texto)}</div>`
+  ).join("");
+  const carregando = state.tdiCarregando
+    ? `<div class="tdi-msg tdi-msg--ia tdi-carregando"><span></span><span></span><span></span> Montando o TDI...</div>`
+    : "";
+  const erro = state.tdiErro ? `<div class="tdi-msg tdi-msg--erro">${escapeHtml(state.tdiErro)}</div>` : "";
+  const doc = r && !state.tdiCarregando ? `
+    <article class="tdi-rascunho">
+      <div class="tdi-rascunho-head">
+        <span class="tdi-rascunho-tag">Rascunho · ${escapeHtml(r.cliente)}</span>
+      </div>
+      <label for="tdiRascunhoTitulo">Título</label>
+      <input id="tdiRascunhoTitulo" value="${escapeAttribute(r.titulo)}" maxlength="200" />
+      <label for="tdiRascunhoConteudo">Conteúdo</label>
+      <textarea id="tdiRascunhoConteudo" rows="14">${escapeHtml(r.conteudo)}</textarea>
+      <div class="actions">
+        <button type="button" onclick="salvarTdiRascunho()">Salvar TDI</button>
+        <button type="button" class="ghost" onclick="descartarTdiRascunho()">Descartar</button>
+      </div>
+    </article>` : "";
+  refs.tdiConversa.innerHTML = msgs + carregando + erro + doc;
+  refs.tdiConversa.hidden = !(msgs || carregando || erro || doc);
+  if (refs.tdiTexto) {
+    refs.tdiTexto.placeholder = r ? "Peça um ajuste no TDI (ex.: inclua o número da nota 1234)..." : "Descreva o TDI...";
+  }
+  if (refs.tdiCliente) refs.tdiCliente.disabled = Boolean(r) || Boolean(state.tdiCarregando);
+}
+
+// Edições manuais no rascunho ficam guardadas antes de um ajuste pela IA.
+function tdiCapturarEdicaoRascunho() {
+  const r = state.tdiRascunho;
+  const titulo = document.getElementById("tdiRascunhoTitulo");
+  const conteudo = document.getElementById("tdiRascunhoConteudo");
+  if (r && titulo && conteudo) {
+    r.titulo = titulo.value;
+    r.conteudo = conteudo.value;
+  }
+}
+
+async function enviarTdiPrompt(event) {
+  event.preventDefault();
+  if (state.tdiCarregando) return;
+  const texto = refs.tdiTexto.value.trim();
+  const imagem = state.tdiImagem || "";
+  if (!texto && !imagem) return;
+
+  tdiCapturarEdicaoRascunho();
+  const rascunho = state.tdiRascunho;
+  let cliente = rascunho ? rascunho.cliente : refs.tdiCliente.value.trim();
+  if (!rascunho) {
+    const cadastrado = state.clientes.find((c) => normalizeText(c.nome) === normalizeText(cliente));
+    if (!cadastrado) {
+      alert("Escolha o cliente do TDI (campo Cliente, ao lado do clipe).");
+      refs.tdiCliente.focus();
+      return;
+    }
+    cliente = cadastrado.nome;
+  }
+
+  state.tdiMensagens = (state.tdiMensagens || []).concat({ texto: texto || "(imagem)", imagem });
+  state.tdiErro = "";
+  state.tdiCarregando = true;
+  refs.tdiTexto.value = "";
+  tdiAutoAltura();
+  // A imagem fica no rascunho (vai junto para a IA nos ajustes e é salva no TDI).
+  const imagemDoTdi = imagem || (rascunho ? rascunho.imagem : "");
+  state.tdiImagem = "";
+  renderTdiImagemPreview();
+  tdiAtualizarEnviar();
+  renderTdiConversa();
+
+  try {
+    const descricao = rascunho ? rascunho.descricao : texto;
+    const resultado = await tdiChamarIA({
+      cliente,
+      descricao,
+      imagem: imagemDoTdi,
+      rascunho,
+      ajuste: rascunho ? texto : "",
+    });
+    state.tdiRascunho = {
+      cliente,
+      descricao: rascunho ? `${rascunho.descricao}\n\nAjuste: ${texto}` : texto,
+      imagem: imagemDoTdi,
+      titulo: resultado.titulo,
+      conteudo: resultado.conteudo,
+    };
+  } catch (err) {
+    state.tdiErro = err.message || String(err);
+    // Devolve o que foi digitado para o técnico não perder o texto.
+    state.tdiMensagens = state.tdiMensagens.slice(0, -1);
+    refs.tdiTexto.value = texto;
+    if (imagem) { state.tdiImagem = imagem; renderTdiImagemPreview(); }
+    tdiAutoAltura();
+  } finally {
+    state.tdiCarregando = false;
+    tdiAtualizarEnviar();
+    renderTdiConversa();
+  }
+}
+
+async function salvarTdiRascunho() {
+  tdiCapturarEdicaoRascunho();
+  const r = state.tdiRascunho;
+  if (!r) return;
+  if (!r.titulo.trim() || !r.conteudo.trim()) {
+    alert("O TDI precisa de título e conteúdo.");
+    return;
+  }
+  const perfil = (window.auth && window.auth.perfil) || {};
+  await sendData("/api/tdis", "POST", {
+    id: createId(),
+    cliente: r.cliente,
+    titulo: r.titulo.trim(),
+    conteudo: r.conteudo.trim(),
+    descricao: r.descricao,
+    imagem: r.imagem || "",
+    criadoPorNome: perfil.nome || perfil.email || "",
+  });
+  limparTdiComposer();
+  await reloadTdis();
+}
+
+function descartarTdiRascunho() {
+  if (!confirm("Descartar este rascunho de TDI?")) return;
+  limparTdiComposer();
+}
+
+function limparTdiComposer() {
+  state.tdiRascunho = null;
+  state.tdiMensagens = [];
+  state.tdiErro = "";
+  state.tdiImagem = "";
+  if (refs.tdiCliente) refs.tdiCliente.value = "";
+  renderTdiImagemPreview();
+  renderTdiConversa();
+  tdiAtualizarEnviar();
+}
+
+window.verTdi = verTdi;
+window.salvarTdiRascunho = salvarTdiRascunho;
+window.descartarTdiRascunho = descartarTdiRascunho;
+window.removerTdiImagem = removerTdiImagem;
+window.deleteEscalaExcecao = deleteEscalaExcecao;
+window.editAtualizacao = editAtualizacao;
+window.removerAtuClienteLote = removerAtuClienteLote;
+window.confirmarAtualizacao = confirmarAtualizacao;
+window.deleteAtualizacao = deleteAtualizacao;
 window.editForcaVendas = editForcaVendas;
+window.copyFvCienciaLinkById = copyFvCienciaLinkById;
+window.verFvCienciaDetalhe = verFvCienciaDetalhe;
+window.deleteFvCiencia = deleteFvCiencia;
 window.toggleSpedGroup = toggleSpedGroup;
 window.toggleProcGroup = toggleProcGroup;
 window.editIssue = editIssue;
@@ -3283,7 +5697,7 @@ window.deleteTecnico = deleteTecnico;
 
 // ── Usuários e acesso (usuarios.html, somente admin) ─────────────────────────
 
-const PAPEL_LABELS = { admin: "Administrador", tecnico: "Técnico", consulta: "Consulta" };
+const PAPEL_LABELS = { admin: "Administrador", tecnico: "Técnico", consulta: "Consulta", qualidade: "Qualidade" };
 
 function toUsuarioJs(row) {
   return {
@@ -3292,6 +5706,8 @@ function toUsuarioJs(row) {
     email: row.email || "",
     papel: row.papel || "consulta",
     ativo: row.ativo === true,
+    // null = todas as rotinas liberadas (ver supabase/perfis_rotinas.sql)
+    rotinas: Array.isArray(row.rotinas) ? row.rotinas : null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -3336,6 +5752,7 @@ function renderUsuarios() {
           onchange="changeUsuarioPapel('${id}', this.value)"${souEu ? ' disabled title="Você não pode alterar o próprio perfil"' : ""}>${options}</select>
       </td>
       <td><span class="status ${u.ativo ? "status-ativo" : "status-inativo"}">${u.ativo ? "Ativo" : "Inativo"}</span></td>
+      <td>${usuarioRotinasCelula(u, id)}</td>
       <td>${escapeHtml(u.createdAt ? new Date(u.createdAt).toLocaleDateString("pt-BR") : "")}</td>
       <td><div class="small-actions">${acao}</div></td>
     </tr>`;
@@ -3386,6 +5803,70 @@ function toggleUsuarioAtivo(id, ativo) {
   return updateUsuario(id, { ativo });
 }
 
+// ── Rotinas liberadas por usuário (perfis.rotinas) ──
+// A lista de rotinas vem do auth.js (window.auth.ROTINAS). Admin acessa tudo.
+
+function usuarioRotinasLista() {
+  return (window.auth && window.auth.ROTINAS) || [];
+}
+
+// Padrão do papel quando perfis.rotinas é null (ex.: Qualidade = só TDI); null = todas.
+function usuarioRotinasPadrao(papel) {
+  const padroes = (window.auth && window.auth.ROTINAS_PADRAO_POR_PAPEL) || {};
+  return padroes[papel] || null;
+}
+
+// Rotinas que valem de fato para o usuário (gravadas, padrão do papel ou todas).
+function usuarioRotinasEfetivas(u) {
+  return u.rotinas || usuarioRotinasPadrao(u.papel) || usuarioRotinasLista().map((r) => r.href);
+}
+
+function usuarioRotinasCelula(u, id) {
+  if (u.papel === "admin") return `<span class="helper-text">Todas (administrador)</span>`;
+  const total = usuarioRotinasLista().length;
+  const efetivas = usuarioRotinasEfetivas(u);
+  const nomes = usuarioRotinasLista().filter((r) => efetivas.includes(r.href)).map((r) => r.label);
+  const liberadas = nomes.length;
+  const texto = liberadas === total ? "Todas" : liberadas === 0 ? "Nenhuma" : liberadas === 1 ? nomes[0] : `${liberadas} de ${total}`;
+  const titulo = liberadas === total ? "Todas as rotinas liberadas" : nomes.join(", ") || "Nenhuma rotina liberada";
+  return `<button type="button" class="ghost usuario-rotinas-btn" title="${escapeAttribute(titulo)}" onclick="openUsuarioRotinas('${id}')">${escapeHtml(texto)}</button>`;
+}
+
+function openUsuarioRotinas(id) {
+  const u = state.usuarios.find((x) => String(x.id) === String(id));
+  if (!u || !refs.usuarioRotinasModal) return;
+  refs.usuarioRotinasId.value = u.id;
+  refs.usuarioRotinasInfo.textContent = `Rotinas que ${u.nome || u.email} (${PAPEL_LABELS[u.papel] || u.papel}) pode usar. As desmarcadas somem do menu e ficam bloqueadas para ele.`;
+  refs.usuarioRotinasLista.innerHTML = usuarioRotinasLista().map((r, i) => {
+    const marcada = usuarioRotinasEfetivas(u).includes(r.href);
+    return `<label class="usuario-rotina-item" for="usuarioRotina${i}">
+      <input type="checkbox" id="usuarioRotina${i}" value="${escapeAttribute(r.href)}"${marcada ? " checked" : ""} />
+      <span>${escapeHtml(r.label)}</span>
+    </label>`;
+  }).join("");
+  openModal(refs.usuarioRotinasModal);
+}
+
+function marcarUsuarioRotinas(marcar) {
+  if (!refs.usuarioRotinasLista) return;
+  refs.usuarioRotinasLista.querySelectorAll('input[type="checkbox"]').forEach((cb) => { cb.checked = marcar; });
+}
+
+async function saveUsuarioRotinas(event) {
+  event.preventDefault();
+  const id = refs.usuarioRotinasId.value;
+  const marcadas = [...refs.usuarioRotinasLista.querySelectorAll('input[type="checkbox"]:checked')].map((cb) => cb.value);
+  // Tudo marcado = null ("todas"): rotinas novas do sistema já entram liberadas.
+  // Papel com padrão próprio (ex.: Qualidade) grava sempre a lista explícita,
+  // porque para ele null significa "só o padrão".
+  const u = state.usuarios.find((x) => String(x.id) === String(id));
+  const temPadrao = u && usuarioRotinasPadrao(u.papel);
+  const rotinas = !temPadrao && marcadas.length === usuarioRotinasLista().length ? null : marcadas;
+  closeModal(refs.usuarioRotinasModal);
+  await updateUsuario(id, { rotinas });
+}
+
+window.openUsuarioRotinas = openUsuarioRotinas;
 window.changeUsuarioPapel = changeUsuarioPapel;
 window.toggleUsuarioAtivo = toggleUsuarioAtivo;
 
@@ -3545,7 +6026,7 @@ function renderTecnicoComboMenu(input, menuEl) {
 }
 
 function openSpedTecnicoMenu() {
-  if (!refs.spedTecnicoMenu) return;
+  if (!refs.spedTecnicoMenu || refs.spedTecnico.readOnly) return;
   renderTecnicoComboMenu(refs.spedTecnico, refs.spedTecnicoMenu);
   refs.spedTecnicoMenu.classList.add("open");
 }
@@ -3555,7 +6036,7 @@ function closeSpedTecnicoMenuLater() {
 }
 
 function openProcTecnicoMenu() {
-  if (!refs.procTecnicoMenu) return;
+  if (!refs.procTecnicoMenu || refs.procTecnico.readOnly) return;
   renderTecnicoComboMenu(refs.procTecnico, refs.procTecnicoMenu);
   refs.procTecnicoMenu.classList.add("open");
 }

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atualizações do Sistema</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=30" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=8"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title">
+      <div>
+        <h1>Atualizações do sistema</h1>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <h2>Atualizações</h2>
+        <div class="small-actions" data-requires="admin">
+          <button type="button" id="atuNovaBtn">Nova atualização</button>
+        </div>
+      </div>
+
+      <p id="atuAviso" class="helper-text" hidden></p>
+
+      <div class="toolbar filters">
+        <div class="filter-field">
+          <label for="atuSearchInput">Busca</label>
+          <input id="atuSearchInput" placeholder="Cliente, técnico, versão..." />
+        </div>
+        <div class="filter-field">
+          <label for="atuTipoFilter">Tipo</label>
+          <select id="atuTipoFilter">
+            <option value="">Todos</option>
+            <option value="banco">Banco de dados</option>
+            <option value="estacao">Estações</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="atuSituacaoFilter">Situação</label>
+          <select id="atuSituacaoFilter">
+            <option value="">Todas</option>
+            <option value="pendente" selected>Pendentes</option>
+            <option value="realizada">Realizadas</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="atuTecnicoFilter">Técnico</label>
+          <select id="atuTecnicoFilter"></select>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="atu-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Cliente</th>
+              <th>Versão / estações</th>
+              <th>Técnico responsável</th>
+              <th>Data prevista</th>
+              <th>Situação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="atuTableBody"></tbody>
+        </table>
+      </div>
+      <div id="atuEmptyState" class="empty">Nenhuma atualização cadastrada.</div>
+    </section>
+  </main>
+
+  <dialog id="atuFormModal" class="popup-modal popup-modal-medium" aria-labelledby="atuFormModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="atuFormModalTitle">Nova atualização</h2>
+        <button type="button" class="icon-button" data-close-modal="atuFormModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="atuForm" novalidate>
+        <input type="hidden" id="atuId" />
+        <div class="form-grid">
+          <div class="col-6">
+            <label for="atuTipo">Tipo de atualização</label>
+            <select id="atuTipo" required>
+              <option value="banco">Banco de dados</option>
+              <option value="estacao">Estações</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label for="atuCliente" id="atuClienteLabel">Cliente</label>
+            <div class="combo">
+              <input id="atuCliente" autocomplete="off" required />
+              <div id="atuClientMenu" class="combo-menu" role="listbox"></div>
+            </div>
+          </div>
+          <!-- Nova atualização: vários clientes de uma vez (uma atualização por cliente) -->
+          <div class="col-12" id="atuLoteRow" hidden>
+            <div id="atuClientesChips" class="atu-chips" aria-live="polite"></div>
+            <small id="atuLoteInfo" class="helper-text"></small>
+          </div>
+          <div class="col-6">
+            <label for="atuTecnico">Técnico responsável</label>
+            <select id="atuTecnico" required></select>
+          </div>
+          <div class="col-6">
+            <label for="atuDataPrevista">Data prevista</label>
+            <input id="atuDataPrevista" type="date" />
+          </div>
+          <div class="col-6">
+            <label for="atuVersao">Versão</label>
+            <input id="atuVersao" />
+          </div>
+          <div class="col-6" id="atuEstacoesRow">
+            <label for="atuEstacoes">Estações</label>
+            <input id="atuEstacoes" placeholder="Ex.: Caixa 1, Caixa 2, Retaguarda" />
+          </div>
+          <div class="col-12">
+            <label for="atuObservacao">Observação</label>
+            <textarea id="atuObservacao" rows="3"></textarea>
+          </div>
+
+          <div class="col-6">
+            <label for="atuRealizada">Atualização realizada?</label>
+            <select id="atuRealizada">
+              <option value="false">Não, pendente</option>
+              <option value="true">Sim, realizada</option>
+            </select>
+          </div>
+          <div class="col-6" id="atuRealizadaEmRow">
+            <label for="atuRealizadaEm">Data da realização</label>
+            <input id="atuRealizadaEm" type="date" />
+          </div>
+        </div>
+        <p class="helper-text" id="atuVersaoHelper">Ao confirmar uma atualização de banco com versão, a versão do banco do cliente também é atualizada.</p>
+        <div class="actions">
+          <button type="submit">Salvar</button>
+          <button type="button" class="ghost" data-close-modal="atuFormModal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=32"></script>
+</body>
+</html>

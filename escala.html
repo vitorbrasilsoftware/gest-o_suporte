@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escala dos Técnicos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=30" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js?v=8"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="title">
+      <div>
+        <h1>Escala dos Técnicos</h1>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <div class="escala-week-nav">
+          <button type="button" id="escalaPrevWeek" class="ghost" aria-label="Semana anterior">&#8592;</button>
+          <span id="escalaWeekLabel" class="escala-week-label"></span>
+          <button type="button" id="escalaNextWeek" class="ghost" aria-label="Próxima semana">&#8594;</button>
+          <button type="button" id="escalaTodayBtn" class="ghost">Hoje</button>
+        </div>
+        <div class="escala-actions" data-requires="write">
+          <button type="button" id="escalaInverterSemanaBtn" class="ghost">Inverter só esta semana</button>
+          <button type="button" id="escalaInverterDaquiBtn" class="ghost">Inverter a partir desta semana</button>
+          <button type="button" id="escalaNovaExcecaoBtn">Nova exceção</button>
+        </div>
+      </div>
+      <p id="escalaWeekInfo" class="helper-text"></p>
+      <div id="escalaTurnosGrid" class="escala-turnos-grid"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <h2>Próximas semanas</h2>
+      </div>
+      <div class="table-wrap">
+        <table class="escala-table" id="escalaProximasTable"></table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <h2>Exceções</h2>
+        <label class="checkbox-field escala-passadas" for="escalaMostrarPassadas">
+          <input type="checkbox" id="escalaMostrarPassadas" />
+          <span>Mostrar exceções passadas</span>
+        </label>
+      </div>
+      <div class="table-wrap">
+        <table class="escala-table">
+          <thead>
+            <tr>
+              <th>Período</th>
+              <th>Tipo</th>
+              <th>Técnico</th>
+              <th>Horário</th>
+              <th>Motivo</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="escalaExcecoesBody"></tbody>
+        </table>
+      </div>
+      <div id="escalaExcecoesEmpty" class="empty">Nenhuma exceção cadastrada.</div>
+    </section>
+
+    <section class="card">
+      <div class="card-header-row">
+        <div>
+          <h2>Configuração</h2>
+          <p class="helper-text">Horários, equipes e o ponto de partida do revezamento. Na semana de referência cada equipe está no horário indicado; a cada semana seguinte as equipes trocam de horário.</p>
+        </div>
+        <div class="small-actions">
+          <button type="button" id="escalaConfigBtn" data-requires="write">Configurar escala</button>
+        </div>
+      </div>
+      <div id="escalaConfigResumo" class="escala-config-resumo"></div>
+    </section>
+  </main>
+
+  <dialog id="escalaConfigModal" class="popup-modal popup-modal-wide" aria-labelledby="escalaConfigModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="escalaConfigModalTitle">Configurar escala</h2>
+        <button type="button" class="icon-button" data-close-modal="escalaConfigModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="escalaConfigForm">
+        <p class="form-section-title">Horários</p>
+        <div id="escalaConfigTurnos"></div>
+
+        <p class="form-section-title">Equipes</p>
+        <div class="form-grid">
+          <div class="col-4">
+            <label for="escalaSemanaReferencia">Semana de referência</label>
+            <input id="escalaSemanaReferencia" type="date" required />
+            <small>Qualquer dia da semana serve; vale a semana inteira.</small>
+          </div>
+        </div>
+        <div id="escalaConfigEquipes"></div>
+
+        <p class="form-section-title">Técnicos</p>
+        <p class="helper-text">Escolha a equipe de cada técnico. Técnicos cadastrados em Setup.</p>
+        <div id="escalaConfigTecnicos" class="escala-config-tecnicos"></div>
+
+        <div class="actions">
+          <button type="submit">Salvar</button>
+          <button type="button" class="ghost" data-close-modal="escalaConfigModal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <dialog id="escalaExcecaoModal" class="popup-modal popup-modal-medium" aria-labelledby="escalaExcecaoModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="escalaExcecaoModalTitle">Nova exceção</h2>
+        <button type="button" class="icon-button" data-close-modal="escalaExcecaoModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="escalaExcecaoForm">
+        <p class="helper-text">Muda o horário de um técnico (troca, cobertura) ou marca folga/ausência em um ou mais dias, sem mexer no revezamento.</p>
+        <div class="form-grid">
+          <div class="col-12">
+            <label for="escalaExcecaoTecnico">Técnico</label>
+            <select id="escalaExcecaoTecnico" required></select>
+          </div>
+          <div class="col-6">
+            <label for="escalaExcecaoInicio">De</label>
+            <input id="escalaExcecaoInicio" type="date" required />
+          </div>
+          <div class="col-6">
+            <label for="escalaExcecaoFim">Até</label>
+            <input id="escalaExcecaoFim" type="date" required />
+          </div>
+          <div class="col-12">
+            <label for="escalaExcecaoTurno">Horário nesse período</label>
+            <select id="escalaExcecaoTurno"></select>
+          </div>
+          <div class="col-12">
+            <label for="escalaExcecaoMotivo">Motivo</label>
+            <input id="escalaExcecaoMotivo" placeholder="Ex.: troca com outro técnico, consulta médica, férias..." />
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit">Salvar</button>
+          <button type="button" class="ghost" data-close-modal="escalaExcecaoModal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=32"></script>
+</body>
+</html>

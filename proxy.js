@@ -11,7 +11,7 @@ const API_KEY = "sk-ant-api03-EA1qf8iRt_MO2zU5-KM8Sb5syNZdQsN0v4hvrGonzrpNwHF56o
 const server = http.createServer((req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, anthropic-version, anthropic-beta");
 
   if (req.method === "OPTIONS") {
     res.writeHead(204);
@@ -35,7 +35,10 @@ const server = http.createServer((req, res) => {
       headers: {
         "Content-Type": "application/json",
         "x-api-key": API_KEY,
-        "anthropic-version": "2023-06-01",
+        // A página pode escolher a versão da API e recursos beta (o TDI usa);
+        // sem cabeçalho, mantém o padrão antigo do assistente do Início.
+        "anthropic-version": req.headers["anthropic-version"] || "2023-06-01",
+        ...(req.headers["anthropic-beta"] ? { "anthropic-beta": req.headers["anthropic-beta"] } : {}),
       },
     };
 

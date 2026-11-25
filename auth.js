@@ -13,10 +13,31 @@
   const PAPEIS = {
     admin: "Administrador",
     tecnico: "Técnico",
-    consulta: "Consulta"
+    consulta: "Consulta",
+    qualidade: "Qualidade"
+  };
+  // Rotinas liberadas por padrão (perfis.rotinas = null) para perfis que não
+  // usam o sistema todo. Ausente aqui = todas as rotinas.
+  const ROTINAS_PADRAO_POR_PAPEL = {
+    qualidade: ["tdi.html"]
   };
   const PAGINAS_ADMIN = ["setup.html", "usuarios.html"];
   const PAGINA_LOGIN = "login.html";
+  // Rotinas que o admin libera ou bloqueia por usuário (perfis.rotinas, editado
+  // em usuarios.html). Início fica sempre liberado; admin sempre acessa tudo.
+  const ROTINAS = [
+    { href: "agenda.html", label: "Agenda" },
+    { href: "escala.html", label: "Escala" },
+    { href: "sped.html", label: "SPED" },
+    { href: "procedimentos.html", label: "Procedimentos" },
+    { href: "implantacoes.html", label: "Implantação" },
+    { href: "diario.html", label: "Diário do Cliente" },
+    { href: "atualizacoes.html", label: "Atualizações" },
+    { href: "tdi.html", label: "TDI" },
+    { href: "problemas.html", label: "Problemas" },
+    { href: "forca-vendas.html", label: "Força de Vendas" },
+    { href: "clientes.html", label: "Clientes" }
+  ];
 
   const paginaAtual = (window.location.pathname.split("/").pop() || "index.html").toLowerCase();
 
@@ -25,6 +46,19 @@
     perfil: null,
     papel: null,
     PAPEIS,
+    ROTINAS,
+    ROTINAS_PADRAO_POR_PAPEL,
+    // perfis.rotinas: null = padrão do papel (todas, ou ROTINAS_PADRAO_POR_PAPEL);
+    // array = só os hrefs listados.
+    rotinaLiberada(pagina) {
+      const href = String(pagina || "").split("?")[0].toLowerCase();
+      if (this.papel === "admin") return true;
+      if (!ROTINAS.some((r) => r.href === href)) return true;
+      const rotinas = this.perfil && this.perfil.rotinas;
+      if (Array.isArray(rotinas)) return rotinas.includes(href);
+      const padrao = ROTINAS_PADRAO_POR_PAPEL[this.papel];
+      return !padrao || padrao.includes(href);
+    },
     // nivel: "read" | "write" | "admin"
     can(nivel) {
       if (nivel === "admin") return this.papel === "admin";
@@ -77,6 +111,15 @@
         window.location.replace("index.html?negado=1");
         return false;
       }
+      if (!auth.rotinaLiberada(paginaAtual)) {
+        window.location.replace("index.html?negado=rotina");
+        return false;
+      }
+      // Qualidade não usa o Início: entra direto nos TDIs (mantém ?negado= para o aviso).
+      if (auth.papel === "qualidade" && paginaAtual === "index.html" && auth.rotinaLiberada("tdi.html")) {
+        window.location.replace("tdi.html" + window.location.search);
+        return false;
+      }
 
       db.auth.onAuthStateChange((event) => {
         if (event === "SIGNED_OUT") irParaLogin();
@@ -127,6 +170,10 @@
         document.querySelectorAll(`a[href="${pagina}"]`).forEach((link) => { link.hidden = true; });
       });
     }
+    // Links do conteúdo para rotinas bloqueadas para este usuário.
+    ROTINAS.filter((r) => !auth.rotinaLiberada(r.href)).forEach((r) => {
+      document.querySelectorAll(`a[href^="${r.href}"]`).forEach((link) => { link.hidden = true; });
+    });
     document.querySelectorAll("[data-requires]").forEach((el) => {
       if (!auth.can(el.getAttribute("data-requires"))) el.hidden = true;
     });
@@ -138,6 +185,7 @@
 
   const ICONES = {
     inicio: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+    escala: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
     agenda: '<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',
     sped: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
     procedimentos: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.1L3.5 17.2a2 2 0 0 0 2.8 2.8l5.8-5.8a4 4 0 0 0 5.1-5.4l-2.6 2.6-2.4-.5-.5-2.4z"/>',
@@ -145,6 +193,8 @@
     diario: '<path d="M4 19.5V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2.5z"/><path d="M4 19.5A2 2 0 0 0 6 21h14M9 7h7M9 11h5"/>',
     problemas: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
     forcaVendas: '<path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>',
+    tdi: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/>',
+    atualizacoes: '<path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/>',
     clientes: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
     setup: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
     usuarios: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>',
@@ -157,13 +207,16 @@
   const MENU = [
     { grupo: "Visão geral", itens: [
       { href: "index.html", label: "Início", icone: "inicio" },
-      { href: "agenda.html", label: "Agenda", icone: "agenda" }
+      { href: "agenda.html", label: "Agenda", icone: "agenda" },
+      { href: "escala.html", label: "Escala", icone: "escala" }
     ] },
     { grupo: "Operação", itens: [
       { href: "sped.html", label: "SPED", icone: "sped" },
       { href: "procedimentos.html", label: "Procedimentos", icone: "procedimentos" },
       { href: "implantacoes.html", label: "Implantação", icone: "implantacao" },
       { href: "diario.html", label: "Diário do Cliente", icone: "diario" },
+      { href: "atualizacoes.html", label: "Atualizações", icone: "atualizacoes" },
+      { href: "tdi.html", label: "TDI", icone: "tdi" },
       { href: "problemas.html", label: "Problemas", icone: "problemas" },
       { href: "forca-vendas.html", label: "Força de Vendas", icone: "forcaVendas" }
     ] },
@@ -191,7 +244,7 @@
   function montarMenuLateral() {
     const nome = auth.perfil.nome || auth.user.email;
     const grupos = MENU.map(({ grupo, itens }) => {
-      const visiveis = itens.filter((item) => !item.admin || auth.can("admin"));
+      const visiveis = itens.filter((item) => (!item.admin || auth.can("admin")) && auth.rotinaLiberada(item.href));
       if (!visiveis.length) return "";
       const links = visiveis.map((item) => {
         const ativo = item.href === paginaAtual;
@@ -273,8 +326,11 @@
   }
 
   function avisarAcessoNegado() {
-    if (new URLSearchParams(window.location.search).get("negado") !== "1") return;
-    alert("Você não tem permissão para acessar aquela página.");
+    const negado = new URLSearchParams(window.location.search).get("negado");
+    if (negado !== "1" && negado !== "rotina") return;
+    alert(negado === "rotina"
+      ? "Essa rotina não está liberada para o seu usuário. Fale com o administrador."
+      : "Você não tem permissão para acessar aquela página.");
     const url = new URL(window.location.href);
     url.searchParams.delete("negado");
     window.history.replaceState(null, "", url.pathname.split("/").pop() + url.search);

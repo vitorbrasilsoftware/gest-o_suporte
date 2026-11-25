@@ -7,10 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=14" />
+  <link rel="stylesheet" href="styles.css?v=30" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
-  <script src="auth.js?v=3"></script>
+  <script src="auth.js?v=8"></script>
 </head>
 <body>
   <main class="container">
@@ -33,11 +33,15 @@
         </div>
         <div>
           <span class="user-role-badge role-tecnico">Técnico</span>
-          <p>Consulta tudo; cria, edita e exclui SPED, procedimentos, problemas e implantações; cadastra e edita clientes.</p>
+          <p>Cria, edita e exclui SPED, procedimentos, problemas e implantações; cadastra e edita clientes — nas rotinas liberadas para ele.</p>
         </div>
         <div>
           <span class="user-role-badge role-consulta">Consulta</span>
-          <p>Somente leitura em todas as telas. Pode exportar backup e gerar PDFs.</p>
+          <p>Somente leitura nas rotinas liberadas para ele. Pode exportar backup e gerar PDFs.</p>
+        </div>
+        <div>
+          <span class="user-role-badge role-qualidade">Qualidade</span>
+          <p>Visualiza, em grid, os TDIs criados por todos os técnicos. Somente leitura; por padrão só a rotina TDI.</p>
         </div>
       </div>
     </section>
@@ -60,6 +64,7 @@
             <option value="admin">Administrador</option>
             <option value="tecnico">Técnico</option>
             <option value="consulta">Consulta</option>
+            <option value="qualidade">Qualidade</option>
           </select>
         </div>
         <div class="filter-field">
@@ -80,6 +85,7 @@
               <th>E-mail</th>
               <th>Perfil</th>
               <th>Situação</th>
+              <th>Rotinas</th>
               <th>Cadastro</th>
               <th>Ações</th>
             </tr>
@@ -119,6 +125,7 @@
             <select id="usuarioPapel">
               <option value="tecnico">Técnico</option>
               <option value="consulta">Consulta</option>
+              <option value="qualidade">Qualidade</option>
               <option value="admin">Administrador</option>
             </select>
           </div>
@@ -131,6 +138,30 @@
     </div>
   </dialog>
 
-  <script src="script.js?v=14"></script>
+  <!-- Modal: rotinas liberadas para o usuário -->
+  <dialog id="usuarioRotinasModal" class="popup-modal popup-modal-medium" aria-labelledby="usuarioRotinasModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="usuarioRotinasModalTitle">Rotinas liberadas</h2>
+        <button type="button" class="icon-button" data-close-modal="usuarioRotinasModal" aria-label="Fechar">X</button>
+      </div>
+      <form id="usuarioRotinasForm" novalidate>
+        <input type="hidden" id="usuarioRotinasId" />
+        <p class="helper-text" id="usuarioRotinasInfo"></p>
+        <div class="small-actions usuario-rotinas-atalhos">
+          <button type="button" class="ghost" id="usuarioRotinasTodasBtn">Marcar todas</button>
+          <button type="button" class="ghost" id="usuarioRotinasNenhumaBtn">Desmarcar todas</button>
+        </div>
+        <div id="usuarioRotinasLista" class="usuario-rotinas-lista"></div>
+        <p class="helper-text">O Início fica sempre liberado. O que o usuário pode fazer dentro de cada rotina continua definido pelo perfil (Técnico ou Consulta).</p>
+        <div class="actions">
+          <button type="submit">Salvar</button>
+          <button type="button" class="ghost" data-close-modal="usuarioRotinasModal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="script.js?v=32"></script>
 </body>
 </html>

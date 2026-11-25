@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Ciência — Força de Vendas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=30" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+</head>
+<body class="ciencia-page">
+  <!-- Página pública (sem login): não carrega auth.js nem script.js. -->
+  <main class="container ciencia-container">
+    <div class="auth-logo ciencia-logo">
+      <img src="logo_gestao-suporte.png?v=2" alt="Gestão Suporte" />
+    </div>
+
+    <section class="card" id="cienciaCarregando">
+      <p class="empty">Carregando...</p>
+    </section>
+
+    <section class="card" id="cienciaErro" hidden>
+      <h2>Link indisponível</h2>
+      <p class="helper-text" id="cienciaErroTexto">Este link é inválido ou foi excluído. Peça um novo link ao suporte.</p>
+    </section>
+
+    <div id="cienciaConteudo" hidden>
+      <section class="card">
+        <h1 class="ciencia-titulo">Força de Vendas</h1>
+
+        <p class="auth-message auth-message-sucesso" id="cienciaConcluida" hidden></p>
+
+        <div class="table-wrap">
+          <table class="pdf-table pdf-table--fv ciencia-table">
+            <thead id="cienciaTabelaHead"></thead>
+            <tbody id="cienciaTabelaBody"></tbody>
+            <tfoot id="cienciaTabelaFoot"></tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="cienciaModal" class="popup-modal popup-modal-medium" aria-labelledby="cienciaModalTitle">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 id="cienciaModalTitle">Confirmar ciência</h2>
+        <button type="button" class="icon-button" data-close-ciencia aria-label="Fechar">X</button>
+      </div>
+      <form id="cienciaForm" novalidate>
+        <p class="helper-text" id="cienciaModalCliente"></p>
+        <p class="auth-message auth-message-erro" id="cienciaFormErro" role="alert" hidden></p>
+        <div class="form-grid">
+          <div class="col-12">
+            <label for="cienciaNome">Nome de quem está dando ciência</label>
+            <input id="cienciaNome" autocomplete="name" maxlength="120" required />
+          </div>
+          <div class="col-12">
+            <label for="cienciaObservacao">Observação (opcional)</label>
+            <textarea id="cienciaObservacao" rows="3" maxlength="2000" placeholder="Alguma divergência ou comentário para o suporte..."></textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="submit" id="cienciaConfirmarBtn">Estou ciente</button>
+          <button type="button" class="ghost" data-close-ciencia>Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="ciencia-fv.js?v=5"></script>
+</body>
+</html>
