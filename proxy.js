@@ -6,7 +6,11 @@ const http = require("http");
 const https = require("https");
 
 const PORT = 3001;
-const API_KEY = "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";
+const API_KEY = process.env.ANTHROPIC_API_KEY;
+if (!API_KEY) {
+  console.error("ANTHROPIC_API_KEY não definida");
+  process.exit(1);
+}
 
 const server = http.createServer((req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
