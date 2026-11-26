@@ -486,7 +486,7 @@
         event.target.reset();
         mostrarView("login");
         mostrarMensagem(msg,
-          "Solicitação enviada. Se for pedido, confirme seu e-mail. Você poderá entrar assim que um administrador liberar seu acesso.",
+          "Solicitação enviada. Você poderá entrar com este e-mail e senha assim que um administrador liberar seu acesso.",
           "sucesso");
       });
     });
@@ -584,7 +584,7 @@
     if (/password should be at least/i.test(texto)) return "A senha não atende ao tamanho mínimo exigido.";
     if (/should be different/i.test(texto)) return "A nova senha deve ser diferente da atual.";
     if (/rate limit|too many/i.test(texto)) return "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
-    if (/signups not allowed|signup is disabled/i.test(texto)) return "O cadastro de novos usuários está desativado.";
+    if (/signups? (are |is )?(not allowed|disabled)/i.test(texto)) return "O cadastro de novos usuários está desativado no Supabase (Authentication → Sign In / Providers → Email).";
     return texto || "Não foi possível concluir a operação.";
   }
   auth.traduzirErro = traduzirErro;

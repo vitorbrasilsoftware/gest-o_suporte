@@ -919,6 +919,20 @@ function usuarioVeTudo() {
   return Boolean(window.auth && window.auth.can("admin"));
 }
 
+// SPED (lançamentos e clientes do SPED): técnico cria, mas só o admin edita e
+// exclui. Consulta e qualidade não alteram nada.
+function podeAlterarSped() {
+  return usuarioVeTudo();
+}
+
+function spedAcoesHtml(item) {
+  if (!podeAlterarSped()) return "";
+  return `<div class="small-actions">
+      <button type="button" onclick="editSpedCorrection('${escapeAttribute(item.id)}')">Editar</button>
+      <button type="button" class="ghost" onclick="deleteSpedCorrection('${escapeAttribute(item.id)}')">Excluir</button>
+    </div>`;
+}
+
 // Técnico do usuário logado — mesmo critério da RLS: cadastro de técnico com o
 // mesmo e-mail do perfil; senão, o nome do perfil.
 function tecnicoDoUsuario() {
@@ -1001,6 +1015,8 @@ function requiredPermission(path, method) {
   if (path === "/api/backup") return "admin";
   // TDI: técnico cria; só o admin exclui (espelha supabase/tdis.sql).
   if (method === "DELETE" && path.startsWith("/api/tdis/")) return "admin";
+  // SPED: técnico cria; só o admin edita/exclui (espelha supabase/sped_somente_admin.sql).
+  if ((method === "PUT" || method === "DELETE") && /^\/api\/sped(-clients)?\//.test(path)) return "admin";
   // Atualizações: só o admin cadastra/edita/exclui; o técnico só confirma.
   if (/^\/api\/atualizacoes(-lote)?(\/|$)/.test(path)) return "admin";
   if (/^\/api\/(tecnicos|tipos-procedimento)(\/|$)/.test(path)) return "admin";
@@ -2423,10 +2439,7 @@ function renderSpedTableRow(item) {
     escapeHtml(getSpedDateValue(item, "horarioAgendamento", "horario_agendamento")),
     escapeHtml(formatDate(getSpedDateValue(item, "dataFinalizacao", "data_finalizacao"))),
     spedObservacaoCell(item.observacao),
-    `<div class="small-actions">
-      <button type="button" onclick="editSpedCorrection('${escapeAttribute(item.id)}')">Editar</button>
-      <button type="button" class="ghost" onclick="deleteSpedCorrection('${escapeAttribute(item.id)}')">Excluir</button>
-    </div>`
+    spedAcoesHtml(item)
   ];
   return spedLinhaTabela(SPED_LABELS_TABELA, cells);
 }
@@ -2443,10 +2456,7 @@ function renderSpedTableRowCorrigido(item) {
     escapeHtml(formatDate(final)),
     dias !== "" ? escapeHtml(String(dias)) : "—",
     escapeHtml(item.observacao),
-    `<div class="small-actions">
-      <button type="button" onclick="editSpedCorrection('${escapeAttribute(item.id)}')">Editar</button>
-      <button type="button" class="ghost" onclick="deleteSpedCorrection('${escapeAttribute(item.id)}')">Excluir</button>
-    </div>`
+    spedAcoesHtml(item)
   ];
   return `<tr>${cells.map((cell) => `<td>${cell}</td>`).join("")}</tr>`;
 }
@@ -2496,10 +2506,10 @@ function renderSpedClientList() {
         <strong>${escapeHtml(client.name)}</strong>
         ${client.phone ? `<span class="client-list-phone">${escapeHtml(client.phone)}</span>` : ""}
       </div>
-      <div class="small-actions">
+      ${podeAlterarSped() ? `<div class="small-actions">
         <button type="button" onclick="editSpedClient('${escapeAttribute(client.name)}')">Editar</button>
         <button type="button" class="ghost" onclick="deleteSpedClient('${escapeAttribute(client.name)}')">Excluir</button>
-      </div>
+      </div>` : ""}
     </div>
   `).join("");
 }
@@ -2642,10 +2652,7 @@ function renderSpedGroupedRow(item) {
     escapeHtml(formatDate(final)),
     dias !== "" ? escapeHtml(String(dias)) : "—",
     spedObservacaoCell(item.observacao || ""),
-    `<div class="small-actions">
-      <button type="button" onclick="editSpedCorrection('${escapeAttribute(item.id)}')">Editar</button>
-      <button type="button" class="ghost" onclick="deleteSpedCorrection('${escapeAttribute(item.id)}')">Excluir</button>
-    </div>`
+    spedAcoesHtml(item)
   ];
   return spedLinhaTabela(SPED_LABELS_AGRUPADO, cells);
 }
@@ -7020,7 +7027,7 @@ function renderAgendaCard(item) {
       <div class="agenda-card-status-row">
         <select class="agenda-card-status-select"
                 data-id="${escapeAttribute(String(item.id))}"
-                data-type="${item._type}">${options}</select>
+                data-type="${item._type}"${!isProc && !podeAlterarSped() ? ' disabled title="Somente administradores alteram SPED."' : ""}>${options}</select>
       </div>
     </div>`;
 }
